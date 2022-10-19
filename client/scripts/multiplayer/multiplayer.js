@@ -92,14 +92,14 @@ const init = () => {
                 await showMessage(payload.notice);
                 startButton.innerHTML = 'Restart'
                 startButton.disabled = false
-                updateMultiplayerScore(payload.score, payload.enemyScore)                
+                updateMultiplayerScore(payload.score, payload.enemyScore)
                 break;
             case SERVER.MESSAGE.OPPONENT_LEFT:
                 clearCanvas();
                 startButton.style.display = 'none'
                 showMessage(payload);
                 disableBtns(moveButtons);
-                break;           
+                break;
             case SERVER.MESSAGE.NO_ROOM_FOUND:
                 await showMessage(payload);
                 break;
@@ -143,7 +143,22 @@ const init = () => {
                 receiveMessage(payload);
                 break;
         }
-    })    
+    })
+
+    //Errors
+
+
+    ioClient.on("connect_error", async() => {
+        clearCanvas();
+        disableBtns(moveButtons);
+        startButton.disabled = true;
+        await showMessage('Lost connection to the server. Trying to establish new connection')
+        setTimeout(() => {
+            socket.connect();
+        }, 1000);
+    });
+
+    //Close before leaving the page
 
     window.onbeforeunload = (e) => {
         ioClient.disconnect(true);
@@ -179,6 +194,9 @@ const handleMove = (e) => {
     if (moveBtn.disabled || moveBtn.style.display === 'none') return;
 
     game.moveAround(e.target.innerHTML.toLowerCase());
+
+    //Check if it's a possible move before sending it to the server
+    if (game.isFinished()) return;
     game.print();
     sendMove({ x: game.posVert, y: game.posHor });
 }
@@ -238,7 +256,7 @@ const setObserverLegend = () => {
     const opponentTrailDesc = document.querySelector('.opponent-trail').nextElementSibling;
     opponentTrailDesc.innerHTML = 'Player 2 trail';
     const overlayDesc = document.querySelector('.overlay').nextElementSibling;
-    overlayDesc.innerHTML = 'Both players at the same position'; 
+    overlayDesc.innerHTML = 'Both players at the same position';
 }
 
 // Listeners

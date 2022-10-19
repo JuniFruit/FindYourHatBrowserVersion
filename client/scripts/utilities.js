@@ -80,7 +80,6 @@ export const returnTime = () => {
 
 export const getQuery = () => {
     const params = new URLSearchParams(document.location.search);
-    console.log(params)
     return params.get('room')
 }
 
@@ -100,7 +99,6 @@ export const handleChatNotifications = (isNew) => {
     const notification = document.querySelector('.chat-notification')
     if (isNew) {
         notification.style.transform = 'scale(1)'
-        console.log(audioNotification)
         audioNotification.play();
     } else {
         notification.style.transform = 'scale(0)'
