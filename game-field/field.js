@@ -16,7 +16,7 @@ const getStartAndEnd = (size) => {
     const playerHorizontal = randomize(size);
     const hatVertical = randomize(size);
     const hatHorizontal = randomize(size);
-    if ((playerHorizontal + playerVertical) === (hatHorizontal + hatVertical)) return getStartAndEnd(size);
+    if ((playerHorizontal === hatHorizontal) && (playerVertical === hatVertical)) return getStartAndEnd(size);
 
     return [[playerVertical, playerHorizontal], [hatVertical, hatHorizontal]];
 }
@@ -97,7 +97,7 @@ let CLIENT_ROOM_FIELDS = new Map();
 
 const createServerField = (room) => {
     
-    if (CLIENT_FIELD.has(room)) return CLIENT_FIELD.get(room); 
+    if (CLIENT_ROOM_FIELDS.has(room)) return CLIENT_ROOM_FIELDS.get(room); 
     const serverField = generateField(SIZE, DIFFICULTY);
 
 
@@ -110,8 +110,8 @@ const createServerField = (room) => {
         }
         converted.push(line);
     }
-    GAME_FIELD.set(room, serverField);
-    CLIENT_FIELD.set(room, converted);
+    GAME_ROOM_FIELDS.set(room, serverField);
+    CLIENT_ROOM_FIELDS.set(room, converted);
     return converted;
 }
 
