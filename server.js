@@ -147,7 +147,7 @@ ioServer.on('connection', async (socket) => {
                 payload: {
                     notice: 'Round ended. Waiting for restart',
                     score: currentSocket.data.type === CONSTANTS.SERVER.PLAYER_TYPE.HOST ? currentSocket.data.score : opponentSocket.data.score,
-                    enemyScore: opponentSocket.data.type === CONSTANTS.SERVER.PLAYER_TYPE.OPPONENT && currentSocket.data.score,
+                    enemyScore: opponentSocket.data.type === CONSTANTS.SERVER.PLAYER_TYPE.OPPONENT ? opponentSocket.data.score : currentSocket.data.score,
                 }
             }))
             return
@@ -178,7 +178,7 @@ ioServer.on('connection', async (socket) => {
                 payload: {
                     notice: 'Round ended. Waiting for restart',
                     score: currentSocket.data.type === CONSTANTS.SERVER.PLAYER_TYPE.HOST ? currentSocket.data.score : opponentSocket.data.score,
-                    enemyScore: opponentSocket.data.type === CONSTANTS.SERVER.PLAYER_TYPE.OPPONENT && currentSocket.data.score,
+                    enemyScore: opponentSocket.data.type === CONSTANTS.SERVER.PLAYER_TYPE.OPPONENT ? opponentSocket.data.score : currentSocket.data.score,
                 }
             }))
         }

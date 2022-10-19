@@ -3,7 +3,7 @@
 ### Description
 
 The main goal of the game is to make your way to a hat (green square) using directional moves and not to fall down in a hole (black square)
-To play the game, visit this [web-site](https://findyourhat.herokuapp.com/home.html);
+To play the game, visit this [web-site](https://findyourhat2.herokuapp.com/);
 
 * Before you start, you have to enter your name and field size. The field is always a square;
 * Game features 2 levels of difficulty (Easy, Hard). It affects the percentage of holes on a field;

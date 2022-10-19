@@ -30,7 +30,7 @@ const scoreBtn = document.getElementById('score');
 
 //Constants
 
-const MAIN_PAGE = 'https://findyourhat.herokuapp.com/';
+const MAIN_PAGE = 'https://findyourhat2.herokuapp.com/';
 const SIZE = 30;
 
 let ioClient = null;
