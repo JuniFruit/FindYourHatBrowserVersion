@@ -115,15 +115,15 @@ const createServerField = (room) => {
     return converted;
 }
 
+const checkFieldExist = (room) => {
+    return GAME_ROOM_FIELDS.has(room)
+}
 
 const checkWinConditions = (x, y, room) => {
-    
-    if (!GAME_ROOM_FIELDS.has(room)) return;
-
     let isFinished = false;
     let isWinner = false;
     let msg = '';
-    
+    console.log(x,y)
     if (x < 0 || y < 0) {
         msg = 'out of the world'
         clearFields(room);
@@ -160,5 +160,6 @@ const clearFields = (room) => {
 
 module.exports = exports = {
     createServerField,
-    checkWinConditions
+    checkWinConditions,
+    checkFieldExist
 };

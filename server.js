@@ -2,7 +2,7 @@ const http = require('http')
 const path = require('path')
 const socketIo = require('socket.io');
 const express = require('express');
-const { createServerField, checkWinConditions } = require('./game-field/field.js');
+const { createServerField, checkWinConditions, checkFieldExist } = require('./game-field/field.js');
 const PORT = process.env.PORT || 4000;
 const app = express();
 const httpServer = http.createServer(app);
@@ -108,7 +108,7 @@ ioServer.on('connection', async (socket) => {
         const { x, y } = move;
 
         if (!opponentSocket.connected) return sendNoOpponentMsg(currentSocket.data.room);
-
+        if (!checkFieldExist(currentSocket.data.room)) return;
         const [msg, isFinished, isWinner] = checkWinConditions(x, y, currentSocket.data.room);
 
 

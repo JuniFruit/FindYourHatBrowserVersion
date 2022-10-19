@@ -193,10 +193,7 @@ const handleMove = (e) => {
     const moveBtn = document.querySelector('#move-button');
     if (moveBtn.disabled || moveBtn.style.display === 'none') return;
 
-    game.moveAround(e.target.innerHTML.toLowerCase());
-
-    //Check if it's a possible move before sending it to the server
-    if (game.isFinished()) return;
+    game.moveAround(e.target.innerHTML.toLowerCase()); 
     game.print();
 
     sendMove({ x: game.posVert, y: game.posHor });
