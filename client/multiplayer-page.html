@@ -7,12 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Your Hat</title>
 
-    <link rel="stylesheet" href="styles.css"></link>
+    <link rel="stylesheet" href="styles.css">
+    </link>
     <script defer src="/socket.io/socket.io.js"></script>
     <script defer src="/scripts/multiplayer/multiplayer.js" type="module"></script>
     <script defer src="./scripts/multiplayer/constants.js"></script>
     <script defer src="./scripts/multiplayer/chat.js" type="module"></script>
-    
+
     <!-- <script defer src="/scripts/main.js" type="module"></script> -->
 </head>
 
@@ -32,13 +33,13 @@
         <section class="main-container">
 
             <div class="canvasBox" id="canvasBox">
-               
+
                 <canvas id="canvas">
-                   
+
 
                 </canvas>
                 <div class="spinner">
-                        
+
                 </div>
                 <section class="stats">
                     <div class="stats-container">
@@ -59,8 +60,18 @@
             </div>
             <div class="util-msg">
             </div>
+            <div class="direction-buttons" id="direction-buttons">
+                <div class="w-button" id="w-button">
+                    <button id="move-button" disabled>W</button>
+                </div>
+                <div class="asd-buttons" id="asd-buttons">
+                    <button id="move-button" disabled>A</button>
+                    <button id="move-button" disabled>S</button>
+                    <button id="move-button" disabled>D</button>
+                </div>
+            </div>
 
-            <div class="dialogBox" id="dialogBox">                
+            <div class="dialogBox" id="dialogBox">
                 <button class="enter operation-button" id="enter-button">Start</button>
                 <button class="operation-button" id="exit">Leave</button>
                 <div class="secondary-buttons">
@@ -72,16 +83,7 @@
                     <button class="operation-button" id="score">Score</button>
                 </div>
             </div>
-            <div class="direction-buttons" id="direction-buttons">
-                <div class="w-button" id="w-button">
-                    <button id="move-button" disabled>W</button>
-                </div>
-                <div class="asd-buttons" id="asd-buttons">
-                    <button id="move-button" disabled>A</button>
-                    <button id="move-button" disabled>S</button>
-                    <button id="move-button" disabled>D</button>
-                </div>
-            </div>
+           
 
         </section>
         <section class="legend">
@@ -116,12 +118,12 @@
                         <div class="legend-square overlay"></div>
                         <span class="legend-description">You're both at the same position</span>
                     </div>
-                    
+
                 </div>
             </div>
         </section>
         <section class="chat">
-            <div class="chat-container">               
+            <div class="chat-container">
                 <h3>Chat with opponent</h3>
             </div>
             <form class="chat-inputs">
