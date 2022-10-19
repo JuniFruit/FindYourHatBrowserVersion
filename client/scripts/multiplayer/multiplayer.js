@@ -152,7 +152,7 @@ const init = () => {
         clearCanvas();
         disableBtns(moveButtons);
         startButton.disabled = true;
-        await showMessage('Lost connection to the server. Trying to establish new connection')
+        await showMessage('Lost connection to the server. Trying to establish a new connection')
         setTimeout(() => {
             socket.connect();
         }, 1000);
@@ -198,6 +198,7 @@ const handleMove = (e) => {
     //Check if it's a possible move before sending it to the server
     if (game.isFinished()) return;
     game.print();
+
     sendMove({ x: game.posVert, y: game.posHor });
 }
 
