@@ -90,12 +90,14 @@ const generateField = (size, difficulty) => {
 }
 
 
-let GAME_FIELD = null;
-let CLIENT_FIELD = null;
+let GAME_ROOM_FIELDS = new Map();
+let CLIENT_ROOM_FIELDS = new Map();
 
-const createServerField = (settings) => {
+//Create field for a specific room and save it in a hash map
+
+const createServerField = (room) => {
     
-    if (CLIENT_FIELD) return CLIENT_FIELD 
+    if (CLIENT_FIELD.has(room)) return CLIENT_FIELD.get(room); 
     const serverField = generateField(SIZE, DIFFICULTY);
 
 
@@ -108,38 +110,40 @@ const createServerField = (settings) => {
         }
         converted.push(line);
     }
-    GAME_FIELD = serverField;
-    CLIENT_FIELD = converted;
+    GAME_FIELD.set(room, serverField);
+    CLIENT_FIELD.set(room, converted);
     return converted;
 }
 
 
-const checkWinConditions = (x, y) => {
+const checkWinConditions = (x, y, room) => {
     
+    if (!GAME_ROOM_FIELDS.has(room)) return;
+
     let isFinished = false;
     let isWinner = false;
     let msg = '';
     
     if (x < 0 || y < 0) {
         msg = 'out of the world'
-        clearFields();
+        clearFields(room);
         return [msg, isFinished = true, isWinner =false]
     }
-    if (x > GAME_FIELD.length - 1 || y > GAME_FIELD[0].length - 1) {
+    if (x > GAME_ROOM_FIELDS.get(room).length - 1 || y > GAME_ROOM_FIELDS.get(room)[0].length - 1) {
         msg = 'out of the world'
-        clearFields();
+        clearFields(room);
 
         return [msg, isFinished = true, isWinner =false]
     }
-    if (GAME_FIELD[x][y].type === hole) {
+    if (GAME_ROOM_FIELDS.get(room)[x][y].type === hole) {
         msg = 'down in the hole'
-        clearFields();
+        clearFields(room);
 
         return [msg, isFinished = true, isWinner =false]
     }
-    if (GAME_FIELD[x][y].type === hat) {
+    if (GAME_ROOM_FIELDS.get(room)[x][y].type === hat) {
         msg = 'found the hat'
-        clearFields();
+        clearFields(room);
 
         return [msg, isFinished = true, isWinner = true]
     }
@@ -148,9 +152,9 @@ const checkWinConditions = (x, y) => {
 
 }
 
-const clearFields = () => {
-    GAME_FIELD = null;
-    CLIENT_FIELD = null;
+const clearFields = (room) => {
+    GAME_ROOM_FIELDS.delete(room);
+    CLIENT_ROOM_FIELDS.delete(room);
 }
 
 
