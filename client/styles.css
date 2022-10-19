@@ -1,0 +1,458 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
+*,*::after,*::before {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    font-family: 'Roboto Slab', serif;
+}
+
+:root {
+    --textColor: #00fc0d72;
+    --bgColor: #1a181a;
+    --bgBox: grey;
+    --character: blue;
+    --opponent: red;
+    --hole: black;
+    --trail: lightblue;
+    --opponentTrail: coral;
+    --hat: green;
+    --overlay: purple;
+    --canvasWidth: 700px;
+    --canvasHeight: 400px;
+
+}
+
+body {   
+    width: 100%;
+    background-color: var(--bgColor);
+    overflow-x: hidden;
+}
+
+button {
+    padding: .5rem;
+    background-color: var(--textColor);
+    font-size: 1.1rem;
+    border-radius: .3rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: grey;
+}
+
+input {
+    outline: none;
+    appearance: none;
+    background-color: grey;
+    color: var(--textColor);
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: .3rem;
+    padding: .5rem;
+}
+
+input::placeholder {
+    color: var(--textColor)
+}
+
+/* Heading styles */
+
+.heading h1 {
+    text-align: center;
+    font-size: 3rem;
+    margin: 1.5rem 0;
+    color: var(--textColor)
+}
+
+
+/* Main container styles */
+
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.canvasBox {
+    border: .5rem solid var(--textColor);
+    border-radius: .7rem;
+    background-color: black;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    min-width: var(--canvasWidth);
+    min-height: var(--canvasHeight);
+
+}
+
+.message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--textColor);
+    width: 100%;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+}
+
+
+
+/* Dialog box */
+
+.dialogBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.util-msg {
+    color: var(--textColor);
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Operation buttons */
+
+.operation-button {
+    margin: .2rem 0;
+}
+
+.secondary-buttons {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    
+}
+
+/* Move Buttons */
+
+.w-button,
+.asd-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.restart-button {
+    display: none;
+    margin: .3rem 0;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+}
+
+.back-button>a {
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all .15s ease;
+    text-decoration: none;
+    color: var(--textColor);
+}
+
+.back-button>a:hover {
+    color: grey;
+}
+
+/* Difficulty */
+
+.radio-container {
+    border: none;
+    margin: .5rem;
+
+}
+
+.radio-container label {
+    color: var(--textColor);
+    font-size: 1.2rem;
+
+}
+
+.radio-container input {
+    cursor: pointer;
+}
+
+input:checked {
+    background-color: var(--textColor)
+}
+
+
+/* Legend */
+
+.legend {
+    position: absolute;
+    background: var(--bgBox);
+    padding: .5rem;
+    border-radius: .4rem;
+    top: 18rem;
+    left: 12%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: all .2s ease-in-out;
+}
+
+.legend-square {
+    width: 1.5rem;
+    height: 1.2rem;
+}
+
+.legend-header {
+    font-size: 1.4rem;
+    margin: 1rem;
+    text-align: center;
+}
+
+.legend-content {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.legend-content>div {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}   
+
+.legend-description {
+    font-weight: 600;  
+}
+
+.you {
+    background-color: var(--character);
+}
+
+.hat {
+    background-color: var(--hat);
+}
+
+.hole {
+    background-color: var(--hole);
+}
+
+.opponent {
+    background-color: var(--opponent);
+}
+
+.trail {
+    background-color: var(--trail);
+}
+
+.opponent-trail {
+    background-color: var(--opponentTrail);
+}
+
+.overlay {
+    background-color: var(--overlay);
+}
+
+.legend-active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+
+/* Chat */
+
+.chat {
+    position: absolute;
+    background: var(--bgBox);
+    padding: .5rem;
+    border-radius: .4rem;
+    top: 20rem;
+    right: -7%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: all .2s ease-in-out;
+}
+
+.chat-container {
+    background-color: white;
+    height: 20rem;
+    width: 18rem;
+    border-radius: .3rem;
+    margin-bottom: .3rem;
+    overflow-y: scroll;
+    scrollbar-width: 0;
+}
+
+.chat-container > h3 {
+    text-align: center;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.274);
+}
+
+.message-chat {
+    padding: .5rem;
+    border-radius: 1rem;
+    display: inline-block;
+    background: grey;
+    font-size: .9rem;
+    margin: .5rem;
+    max-width: 10rem;
+    word-wrap: break-word;
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    
+}
+.received {  
+    align-items: flex-start;
+ 
+}
+
+.time {
+    font-size: .7rem;
+}
+
+.chat-active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+#chat {
+    position: relative;
+}
+.chat-notification { 
+    font-size: .4rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    transform: scale(0);
+    justify-content: center;
+    position: absolute;
+    font-weight: 600;
+    color: white;
+    top: -.3rem;
+    right: -.2rem;
+    width: 1rem;
+    height: 1rem;
+    background-color: gray;
+    border-radius: 50%;
+    transition: transform .1s ease-in-out;
+}
+
+@keyframes slideInRight {
+    from {
+
+    }
+}
+
+
+/* Spinner */
+.spinner {
+    position: absolute;
+    top: 55%;
+    left: 45%;
+    display: none;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: transparent;
+    border: .5rem solid grey;
+    border-top-color: var(--textColor); 
+    animation-name: spinner;
+    animation-timing-function: cubic-bezier(0, 0, 0, 0);
+    animation-duration: .5s;
+    animation-iteration-count: infinite;
+    
+}
+
+
+@keyframes spinner {
+    from {
+        transform: rotate(0deg);
+
+    }
+
+
+    to {
+        transform: rotate(360deg);
+        
+    }
+
+
+}
+
+/* Stats */
+
+.stats {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: none;
+    width: 40rem;
+    height: 20rem;
+    padding: 1rem;
+    border-radius: .5rem;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.379);
+    z-index: 50;
+}
+
+.stats-header {
+    color: var(--textColor);
+    font-weight: 700;
+    text-align: center;
+    font-size: 2rem;
+    margin: .5rem 0;
+}
+
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.stats-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 5rem;
+}
+
+.score-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+}
+
+.score {
+    font-weight: 700;
+    font-size: 10rem;
+}
+
+.score-header {
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-align: center;
+}
+.playerStats:nth-child(n+1) {
+    color: var(--character)
+}
+
+.opponentStats:nth-child(n+1) {
+    color: var(--opponent)
+}
+
+.stats-active {
+    display: block;
+}

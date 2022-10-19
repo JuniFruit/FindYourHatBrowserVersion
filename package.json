@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.2.0",
+  "description": "The main goal of the game is to make your way to a hat (green square) using directional moves and not to fall down in a hole (black square)\r To play the game, visit this [web-site](https://findyourhat.herokuapp.com/home.html);",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  
+  "keywords": [],
+  "author": "JuniFruit",
+  "license": "ISC",  
+  
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.5.3"
+  }
+}

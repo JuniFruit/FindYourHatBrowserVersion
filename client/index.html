@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Hat</title>
+
+    <link rel="stylesheet" href="styles.css">
+    </link>
+
+    <script defer src="/scripts/main.js" type="module"></script>
+</head>
+
+<body>
+    <main>
+
+        <header>
+            <div class="back-button">
+                <!-- <a href="#">Back to portfolio </a> -->
+
+            </div>
+            <div class="heading">
+                <h1>Find Your Hat Game</h1>
+            </div>
+
+        </header>
+        <section class="main-container">
+
+            <div class="canvasBox" id="canvasBox">
+
+                <canvas id="canvas">
+
+                </canvas>
+               
+            </div>
+
+            <div class="dialogBox" id="dialogBox">
+                <div class="settings" id="settings">
+                    <input id="inputName" value="" placeholder="Your Name" />
+                    <input id="inputSize" type="number" min="5" max="30" placeholder="Size" />
+                    <fieldset class="radio-container">
+                        <div class="easy-option">
+                            <input id="easy" type="radio" value="2" name="difficulty" />
+                            <label for="easy">Easy</label>
+
+                        </div>
+                        <div class="hard-option">
+                            <input id="hard" type="radio" value="4" name="difficulty" checked aria-checked="true" />
+                            <label for="hard">Hard</label>
+                        </div>
+
+
+
+                    </fieldset>
+
+
+                </div>
+                <button class="enter operation-button" id="enter-button">Start</button>
+                <button class="multiplayer operation-button" id="multiplayer-button">Multiplayer</button>
+                <div class="secondary-buttons">
+                    <button class="operation-button" id="help">Help</button>
+                    <button class="restart-button operation-button" id="restart-button">Restart</button>
+                </div>
+            </div>
+            <div class="direction-buttons" id="direction-buttons">
+                <div class="w-button" id="w-button">
+                    <button id="move-button" disabled>W</button>
+                </div>
+                <div class="asd-buttons" id="asd-buttons">
+                    <button id="move-button" disabled>A</button>
+                    <button id="move-button" disabled>S</button>
+                    <button id="move-button" disabled>D</button>
+                </div>
+            </div>
+
+        </section>
+        <section class="legend">
+            <div class="legend-container">
+                <h3 class="legend-header">Legend</h3>
+                <div class="legend-content">
+                    <div>
+                        <div class="legend-square you"></div>
+                        <span class="legend-description">Your character</span>
+                    </div>
+                    <div>
+                        <div class="legend-square hole"></div>
+                        <span class="legend-description">Hole</span>
+                    </div>
+                    <div>
+                        <div class="legend-square trail"></div>
+                        <span class="legend-description">Your trail</span>
+                    </div>
+                    <div>
+                        <div class="legend-square hat"></div>
+                        <span class="legend-description">Hat (your target)</span>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+
+</html>
