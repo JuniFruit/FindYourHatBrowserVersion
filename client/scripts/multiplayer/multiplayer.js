@@ -12,7 +12,10 @@ import {
     setQuery,
     updateMultiplayerScore,
     handleChatNotifications,
-    setUtilMsg
+    setUtilMsg,
+    resetCanvasSize,
+    showScaleUpMsg,
+    countDownForElement
 } from '../utilities.js';
 
 import { receiveMessage, sendMessage } from './chat.js';
@@ -27,7 +30,7 @@ const helpBtn = document.getElementById('help');
 const exitBtn = document.getElementById('exit');
 const spinner = document.querySelector('.spinner');
 const scoreBtn = document.getElementById('score');
-
+const utilMsg = document.querySelector('.util-msg')
 //Constants
 
 const MAIN_PAGE = 'https://findyourhat2.herokuapp.com/';
@@ -64,6 +67,7 @@ const init = () => {
                 updateMultiplayerScore(0, 0)
                 setUtilMsg();
                 disableBtns(moveButtons);
+                resetCanvasSize();
                 await showMessage(payload);
                 startButton.innerHTML = 'Waiting for a player';
                 startButton.disabled = true;
@@ -72,8 +76,9 @@ const init = () => {
                 break;
             case SERVER.MESSAGE.READY_TO_START:
                 spinner.style.display = 'none'
+                utilMsg.innerHTML = '';
                 setQuery('')
-                startButton.innerHTML = 'Game in progress'
+                startButton.innerHTML = 'Restart'
                 startButton.disabled = true
                 enableBtns(moveButtons);
                 start()
@@ -82,6 +87,7 @@ const init = () => {
             case SERVER.MESSAGE.ROUND_LOST:
                 disableBtns(moveButtons)
                 clearCanvas();
+                await showScaleUpMsg('You\'ve Lost!', 'red')
                 await showMessage(payload.notice + '. Waiting for opponent to restart');
                 startButton.disabled = true
                 updateMultiplayerScore(payload.score, payload.enemyScore)
@@ -89,19 +95,20 @@ const init = () => {
             case SERVER.MESSAGE.ROUND_WON:
                 clearCanvas();
                 disableBtns(moveButtons)
-                await showMessage(payload.notice);
-                startButton.innerHTML = 'Restart'
-                startButton.disabled = false
+                await showScaleUpMsg('You\'ve Won!', 'Blue')
+                await showMessage(payload.notice + '. Press Restart to continue');
+                await countDownForElement(startButton, 3);                
                 updateMultiplayerScore(payload.score, payload.enemyScore)
                 break;
             case SERVER.MESSAGE.OPPONENT_LEFT:
                 clearCanvas();
                 startButton.style.display = 'none'
-                showMessage(payload);
+                showMessage(payload);         
                 disableBtns(moveButtons);
                 break;
             case SERVER.MESSAGE.NO_ROOM_FOUND:
                 await showMessage(payload);
+                startButton.style.display = 'none';
                 break;
             case SERVER.MESSAGE.OBSERVER_NEW_CONNECTION:
                 setObserver()
@@ -193,7 +200,7 @@ const handleMove = (e) => {
     const moveBtn = document.querySelector('#move-button');
     if (moveBtn.disabled || moveBtn.style.display === 'none') return;
 
-    game.moveAround(e.target.innerHTML.toLowerCase()); 
+    game.moveAround(e.target.innerHTML.toLowerCase());       
     game.print();
 
     sendMove({ x: game.posVert, y: game.posHor });
@@ -226,6 +233,7 @@ const openStats = (e) => {
     }
 }
 
+
 const setObserver = () => {
     moveButtons.forEach(btn => {
         btn.style.display = 'none';
@@ -257,6 +265,7 @@ const setObserverLegend = () => {
     overlayDesc.innerHTML = 'Both players at the same position';
 }
 
+
 // Listeners
 
 moveButtons.forEach(btn => btn.onclick = handleMove);
@@ -277,4 +286,3 @@ helpBtn.onclick = openLegend;
 exitBtn.onclick = () => window.location.href = MAIN_PAGE;
 window.onkeydown = (e) => handleKeyPress(e, [handleMove, openStats]);
 scoreBtn.onclick = openStats;
-

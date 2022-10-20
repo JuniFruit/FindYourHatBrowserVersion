@@ -1,4 +1,3 @@
-import { CANVAS_SIZE } from "./utilities.js";
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -22,8 +21,8 @@ export class FieldEl {
 
     setSizeAndPos(x, y, amount) {   
     
-        this._w = Math.floor(CANVAS_SIZE.w / amount);
-        this._h = Math.floor(CANVAS_SIZE.h / amount);    
+        this._w = (canvas.width / amount);
+        this._h = (canvas.height / amount);    
         this._x = x * this._w;
         this._y = y * this._h;
     }

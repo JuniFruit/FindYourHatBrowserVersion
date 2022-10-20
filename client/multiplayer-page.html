@@ -57,6 +57,52 @@
                         </div>
                     </div>
                 </section>
+                <section class="chat">
+                    <div class="chat-container">
+                        <h3>Chat with opponent</h3>
+                    </div>
+                    <form class="chat-inputs">
+                        <input class="msg-input" type="text" maxlength="100" required />
+                        <button class="submit" type="submit">></button>
+                    </form>
+                </section>
+                <section class="legend">
+                    <div class="legend-container">
+                        <h3 class="legend-header">Legend</h3>
+                        <div class="legend-content">
+                            <div>
+                                <div class="legend-square you"></div>
+                                <span class="legend-description">Your character</span>
+                            </div>
+                            <div>
+                                <div class="legend-square trail"></div>
+                                <span class="legend-description">Your trail</span>
+                            </div>
+                            <div>
+                                <div class="legend-square hole"></div>
+                                <span class="legend-description">Hole</span>
+                            </div>
+                            <div>
+                                <div class="legend-square hat"></div>
+                                <span class="legend-description">Hat (your target)</span>
+                            </div>
+                            <div>
+                                <div class="legend-square opponent"></div>
+                                <span class="legend-description">Your opponent</span>
+                            </div>
+                            <div>
+                                <div class="legend-square opponent-trail"></div>
+                                <span class="legend-description">Your opponent's trail</span>
+                            </div>
+                            <div>
+                                <div class="legend-square overlay"></div>
+                                <span class="legend-description">You're both at the same position</span>
+                            </div>
+        
+                        </div>
+                    </div>
+                </section> 
+                         
             </div>
             <div class="util-msg">
             </div>
@@ -86,53 +132,10 @@
            
 
         </section>
-        <section class="legend">
-            <div class="legend-container">
-                <h3 class="legend-header">Legend</h3>
-                <div class="legend-content">
-                    <div>
-                        <div class="legend-square you"></div>
-                        <span class="legend-description">Your character</span>
-                    </div>
-                    <div>
-                        <div class="legend-square trail"></div>
-                        <span class="legend-description">Your trail</span>
-                    </div>
-                    <div>
-                        <div class="legend-square hole"></div>
-                        <span class="legend-description">Hole</span>
-                    </div>
-                    <div>
-                        <div class="legend-square hat"></div>
-                        <span class="legend-description">Hat (your target)</span>
-                    </div>
-                    <div>
-                        <div class="legend-square opponent"></div>
-                        <span class="legend-description">Your opponent</span>
-                    </div>
-                    <div>
-                        <div class="legend-square opponent-trail"></div>
-                        <span class="legend-description">Your opponent's trail</span>
-                    </div>
-                    <div>
-                        <div class="legend-square overlay"></div>
-                        <span class="legend-description">You're both at the same position</span>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-        <section class="chat">
-            <div class="chat-container">
-                <h3>Chat with opponent</h3>
-            </div>
-            <form class="chat-inputs">
-                <input class="msg-input" type="text" maxlength="100" required />
-                <button class="submit" type="submit">></button>
-            </form>
-        </section>
+        
+        
         <section class="audio">
-            <audio id="chat-alert" src="./assets/lg_pop.mp3"></audio>
+            <audio id="chat-alert" src="./assets/lg_pop.mp3" type="audio/mp3"></audio>
         </section>
     </main>
 

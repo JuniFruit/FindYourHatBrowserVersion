@@ -125,6 +125,7 @@ export class Field {
     }
 
     //Checks if players overlay each other (multiplayer)
+    
     isOverlay() {
         const horizontal = this.posHor == this.opponentPosHor;
         const vertical = this.posVert == this.opponentPosVert;

@@ -1,6 +1,6 @@
 import { Field } from "./game.js";
 import { clearCanvas, setSize } from "./draw.js";
-import { clearMessage, showMessage, CANVAS_SIZE, handleKeyPress, openLegend } from "./utilities.js";
+import { clearMessage, showMessage, CANVAS_SIZE, handleKeyPress, openLegend, resetCanvasSize, countDownForElement } from "./utilities.js";
 
 const enterButton = document.getElementById('enter-button');
 const moveButtons = document.querySelectorAll('#move-button');
@@ -18,7 +18,7 @@ let SIZE = null;
 let DIFFICULTY = null;
 
 const startGame = async () => {
-   grabInputs();
+    grabInputs();
 
     if (!NAME || !SIZE) return showMessage('Enter your name and size of the field');
     if (Number(SIZE) > 30 || Number(SIZE) < 5) return showMessage('Possible size is between 5 and 30 units');
@@ -54,7 +54,8 @@ const handleMove = (e) => {
         clearCanvas();
         game.isOver = true;
         moveButtons.forEach(btn => btn.disabled = true)
-        return showMessage(`${message} Your current streak is ${game.playerStats.winsInRow}`);
+        showMessage(`${message} Your current streak is ${game.playerStats.winsInRow}`);
+        countDownForElement(restartButton, 3)
     } else {
         game.print();
     }
@@ -65,7 +66,7 @@ const exitGame = () => {
     settingsContainer.style.display = 'block'
     restartButton.style.display = 'none';
     multiplayerBtn.style.display = 'block';
-
+    resetCanvasSize();
     moveButtons.forEach(btn => btn.disabled = true)
 
     game.isOver = true;
@@ -74,6 +75,7 @@ const exitGame = () => {
 const restartGame = () => {
     moveButtons.forEach(btn => btn.disabled = false)
     game.isOver = false;
+    setSize(CANVAS_SIZE.w, CANVAS_SIZE.h)
     game.gameInit();
 
 }

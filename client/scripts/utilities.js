@@ -1,6 +1,8 @@
 
 // Helper functions
 
+import { setSize } from "./draw.js";
+
 export const randomNum = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
 }
@@ -23,6 +25,17 @@ export const heuristics = (current, endPoint) => {
     return d;
 }
 
+export const showScaleUpMsg = async (msg, color) => {
+    clearMessage();
+    const canvasBox = document.getElementById('canvasBox');
+    const text = document.createElement('h2');
+    text.className = 'message scaleUpMsg'
+    text.style.color = color;
+    text.innerHTML = msg;
+    canvasBox.append(text)
+    await waitForMs(2000)
+}
+
 export const showMessage = async (msg, delay = 20) => {
     const canvasBox = document.getElementById('canvasBox');
     clearMessage();
@@ -31,14 +44,13 @@ export const showMessage = async (msg, delay = 20) => {
     const text = document.createElement('h3');
     text.className = 'message'
     let i = 0;
-    document.querySelectorAll('.operation-button').forEach(btn => btn.disabled = true)
     while (i < letters.length) {
         await waitForMs(delay); 
         text.append(letters[i]);
         canvasBox.append(text);
         i++
     }
-    document.querySelectorAll('.operation-button').forEach(btn => btn.disabled = false)
+  
 
     return;
 }
@@ -118,9 +130,26 @@ export const setUtilMsg = () => {
     }
 }
 
+export const resetCanvasSize = () => {
+    setSize(650, 400)
+}
+
+export const countDownForElement = async (element, count) => {
+    element.disabled = true;
+    const prevInnerHtml = element.innerHTML;
+    let current = count
+    while (current > 0) {
+        element.innerHTML = `${current}`;
+        await waitForMs(1000);
+        current--;
+    }
+    element.disabled = false;
+    element.innerHTML = prevInnerHtml;
+}
+
 // Constants
 
 export const CANVAS_SIZE = {
-    w: 750,
-    h: 450
+    w: Math.floor(window.innerWidth - (window.innerWidth * 0.25)),
+    h: Math.floor(window.innerHeight - (window.innerHeight * 0.15))
 }

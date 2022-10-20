@@ -11,6 +11,7 @@ html {
 
 :root {
     --textColor: #00fc0d72;
+    --buttonHover: #00fc0dba;
     --bgColor: #1a181a;
     --bgBox: grey;
     --character: blue;
@@ -20,7 +21,7 @@ html {
     --opponentTrail: coral;
     --hat: green;
     --overlay: purple;
-    --canvasWidth: 700px;
+    --canvasWidth: 650px;
     --canvasHeight: 400px;
 
 }
@@ -32,21 +33,28 @@ body {
 }
 
 button {
-    padding: .5rem;
+    border: none;
+    background: transparent;
+    padding: .5rem;    
     background-color: var(--textColor);
     font-size: 1.1rem;
     border-radius: .3rem;
-    cursor: pointer;
+    cursor: pointer;    
 }
 
 button:hover {
-    background-color: grey;
+    background-color: var(--buttonHover);
+}
+button:disabled {
+    background-color: var(--bgBox);
+    color: rgba(0, 0, 0, 0.253);
 }
 
 input {
     outline: none;
-    appearance: none;
-    background-color: grey;
+    appearance: none; 
+    border: none;
+    background-color: grey;    
     color: var(--textColor);
     font-weight: 600;
     font-size: 1.1rem;
@@ -99,6 +107,25 @@ input::placeholder {
     font-size: 1.5rem;
     color: var(--textColor);
     width: 100%;
+}
+.scaleUpMsg {
+    font-size: 3rem;
+    animation: scaleUp;
+    animation-timing-function: ease-in;
+    animation-duration: .5s;
+    animation-iteration-count: 1;
+    transform: translate(-50%, -50%);
+
+}
+
+@keyframes scaleUp {
+    from {
+        scale: 0;
+    }
+
+    to {
+        scale: 1;
+    }
 }
 
 #canvas {
@@ -194,14 +221,16 @@ input:checked {
 /* Legend */
 
 .legend {
-    position: absolute;
+    position: absolute; 
     background: var(--bgBox);
     padding: .5rem;
     border-radius: .4rem;
-    top: 18rem;
-    left: 12%;
-    transform: translate(-50%, -50%) scale(0);
+    top: .5rem;
+    left: 0;
+    transform-origin: left;
+    transform: rotate3d(0,1,0, .25turn);
     transition: all .2s ease-in-out;
+    z-index: 51;
 }
 
 .legend-square {
@@ -260,7 +289,7 @@ input:checked {
 }
 
 .legend-active {
-    transform: translate(-50%, -50%) scale(1);
+    transform: rotate3d(0,1,0, .0turn)
 }
 
 
@@ -268,19 +297,22 @@ input:checked {
 
 .chat {
     position: absolute;
-    background: var(--bgBox);
+    background: var(--textColor);
     padding: .5rem;
     border-radius: .4rem;
-    top: 20rem;
-    right: -7%;
-    transform: translate(-50%, -50%) scale(0);
+    top: .5rem;
+    right: 0;
+    transform-origin: right;
+    transform: rotate3d(0,1,0, .25turn);
     transition: all .2s ease-in-out;
+    z-index: 51;
+    
 }
 
 .chat-container {
     background-color: white;
-    height: 20rem;
-    width: 18rem;
+    height: calc(var(--canvasHeight) - 100px);
+    max-width: 18rem;
     border-radius: .3rem;
     margin-bottom: .3rem;
     overflow-y: scroll;
@@ -320,7 +352,7 @@ input:checked {
 }
 
 .chat-active {
-    transform: translate(-50%, -50%) scale(1);
+    transform: rotate3d(0,1,0,.0turn);
 }
 
 #chat {

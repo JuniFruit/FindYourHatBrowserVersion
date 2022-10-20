@@ -21,7 +21,7 @@ const randomRoom = () => {
 
 
 ioServer.on('connection', async (socket) => {
-
+    
     socket.on('access-room', async (roomId) => {
         if (!roomId) {
             const room = randomRoom().toString();
@@ -75,7 +75,7 @@ ioServer.on('connection', async (socket) => {
     // Chat logic
 
     socket.on('message-chat', (msg) => {
-
+        if (!socket) return;
         socket.to(socket.data.room).emit('message-chat', ({
             type: CONSTANTS.CLIENT.MESSAGE.NEW_MESSAGE,
             payload: {
@@ -88,7 +88,7 @@ ioServer.on('connection', async (socket) => {
 
     // Generation event
     socket.on('generate', () => {
-
+        if (!socket) return;
         // if (!socket.data.enemy?.connected) return sendNoOpponentMsg(socket.data.room);
         const field = createServerField(socket.data.room);
         if (socket.data.type === CONSTANTS.SERVER.PLAYER_TYPE.OBSERVER) return ioServer.to(socket.id).emit('field-return', field);
@@ -98,7 +98,7 @@ ioServer.on('connection', async (socket) => {
     // Communicating moves and checking win conditions
 
     socket.on('move', (move) => {
-
+        if (!socket) return;
 
         const currentSocket = socket;
         const opponentSocket = currentSocket.data.enemy;

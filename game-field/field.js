@@ -123,7 +123,7 @@ const checkWinConditions = (x, y, room) => {
     let isFinished = false;
     let isWinner = false;
     let msg = '';
-    console.log(x,y)
+
     if (x < 0 || y < 0) {
         msg = 'out of the world'
         clearFields(room);
