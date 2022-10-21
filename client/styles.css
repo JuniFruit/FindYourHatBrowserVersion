@@ -153,10 +153,6 @@ input::placeholder {
     cursor: pointer;
 };
 
-#inputSize {
-    min-width: 5.5rem;
-}
-
 /* Operation buttons */
 
 .operation-button {
@@ -183,14 +179,14 @@ input::placeholder {
 }
 #move-button {
     background-color: gray;
-    color: rgba(0, 0, 0, 0.253);
-    opacity: .3;
+    color: rgba(0, 0, 0, 0.303);
+    opacity: .4;
     width: 3rem;
     height: 3rem;
 }
 
 #move-button:hover {
-    opacity: .5;
+    opacity: .6;
 }
 
 .left-buttons {

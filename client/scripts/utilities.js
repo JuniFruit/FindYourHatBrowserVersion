@@ -1,7 +1,15 @@
+import { setSize } from "./draw.js";
+
+
+// Constants
+
+export const CANVAS_SIZE = {
+    w: Math.floor(window.innerWidth - (window.innerWidth * 0.25)),
+    h: checkIsMobile() ?  350 : Math.floor(window.innerHeight - (window.innerHeight * 0.15))
+}
 
 // Helper functions
 
-import { setSize } from "./draw.js";
 
 export const randomNum = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
@@ -15,6 +23,9 @@ export const checkIsMobile = () => {
 export const setMobile = () => {  
     document.querySelector('.mobile-buttons').style.display = 'flex';
     document.querySelector('.moving').remove();
+    const canvasBox = document.querySelector('.canvasBox')
+    canvasBox.style.minWidth  = CANVAS_SIZE.w;
+    canvasBox.style.minHeight = CANVAS_SIZE.h;
 }
 
 //Gets coordinates from predefined set
@@ -181,9 +192,3 @@ export const openStats = (e) => {
     }
 }
 
-// Constants
-
-export const CANVAS_SIZE = {
-    w: Math.floor(window.innerWidth - (window.innerWidth * 0.25)),
-    h: checkIsMobile() ?  400 : Math.floor(window.innerHeight - (window.innerHeight * 0.15))
-}
