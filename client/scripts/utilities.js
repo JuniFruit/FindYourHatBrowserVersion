@@ -1,7 +1,9 @@
 import { setSize } from "./draw.js";
 
 
-// Constants
+export const checkIsMobile = () => {
+    return window.innerWidth <= 768
+}
 
 export const CANVAS_SIZE = {
     w: Math.floor(window.innerWidth - (window.innerWidth * 0.25)),
@@ -10,15 +12,24 @@ export const CANVAS_SIZE = {
 
 // Helper functions
 
+export const preventDoubleTap = (element) => {
+
+    let doubleTouchStartTimestamp = 0;
+    element.addEventListener("touchstart", function (event) {
+        let now = +(new Date());
+        if (doubleTouchStartTimestamp + 700 > now) {
+            event.preventDefault();
+        };
+        doubleTouchStartTimestamp = now;
+    });
+}
+
 
 export const randomNum = (min, max) => {
-    return Math.floor(Math.random() * (max - min) + min);
-}
+    return Math.floor(Math.random() * (max - min) + min);}
 
 
-export const checkIsMobile = () => {
-    return window.innerWidth <= 768
-}
+
 
 export const setMobile = () => {  
     document.querySelector('.mobile-buttons').style.display = 'flex';

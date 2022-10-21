@@ -283,6 +283,7 @@ chatBtn.onclick = (e) => {
 
 window.onload = () => {
     if (checkIsMobile()) setMobile();   
+    preventDoubleTap(document.querySelector('.mobile-buttons'));
 };
 helpBtn.onclick = openLegend;
 exitBtn.onclick = () => window.location.href = MAIN_PAGE;

@@ -10,9 +10,10 @@ import {
     countDownForElement,
     finishRound,
     openStats,
-    disableBtns,   
+    disableBtns,
     checkIsMobile,
-    setMobile
+    setMobile,
+    preventDoubleTap
 } from "./utilities.js";
 
 const enterButton = document.getElementById('enter-button');
@@ -25,7 +26,10 @@ const scoreBtn = document.getElementById('score');
 const moveButtons = document.querySelectorAll('#move-button');
 
 window.onload = () => {
-    if (checkIsMobile()) setMobile();
+    if (checkIsMobile()) {
+        setMobile();
+        preventDoubleTap(document.querySelector('.mobile-buttons'));
+    };
     showMessage('Hello, visitor! To start a game, enter the size of the field.')
 };
 
@@ -59,6 +63,7 @@ const redirectToMultiplayer = () => {
 }
 
 const handleMove = (e) => {
+    e.preventDefault();
     if (game.isOver || !game) return;
     const message = game.moveAround(e.target.innerHTML.toLowerCase());
 
@@ -141,4 +146,5 @@ operationButtons.forEach(btn => btn.onclick = handleGame);
 window.onkeydown = (e) => handleKeyPress(e, [handleMove])
 helpBtn.onclick = openLegend
 scoreBtn.onclick = openStats;
+
 
