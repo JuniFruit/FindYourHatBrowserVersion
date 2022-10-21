@@ -36,6 +36,7 @@ button {
     border: none;
     background: transparent;
     padding: .5rem;    
+    margin: .3rem;
     background-color: var(--textColor);
     color: black;
     font-size: 1.1rem;
@@ -153,11 +154,8 @@ input::placeholder {
     cursor: pointer;
 };
 
-/* Operation buttons */
+/* Operation and secondary operation buttons */
 
-.operation-button {
-    margin: .2rem 0;
-}
 
 .secondary-buttons {
     display: flex;
@@ -186,6 +184,7 @@ input::placeholder {
 }
 
 #move-button:hover {
+    margin: 0;
     opacity: .6;
 }
 

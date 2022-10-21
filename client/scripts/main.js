@@ -3,7 +3,6 @@ import { clearCanvas, setSize } from "./draw.js";
 import {
     clearMessage,
     showMessage,
-    CANVAS_SIZE,
     handleKeyPress,
     openLegend,
     resetCanvasSize,
@@ -13,7 +12,8 @@ import {
     disableBtns,
     checkIsMobile,
     setMobile,
-    preventDoubleTap
+    preventDoubleTap,
+    getCanvaseSize
 } from "./utilities.js";
 
 const enterButton = document.getElementById('enter-button');
@@ -25,13 +25,7 @@ const multiplayerBtn = document.getElementById('multiplayer-button');
 const scoreBtn = document.getElementById('score');
 const moveButtons = document.querySelectorAll('#move-button');
 
-window.onload = () => {
-    if (checkIsMobile()) {
-        setMobile();
-        preventDoubleTap(document.querySelector('.mobile-buttons'));
-    };
-    showMessage('Hello, visitor! To start a game, enter the size of the field.')
-};
+
 
 let game;
 let SIZE = null;
@@ -42,7 +36,7 @@ const initGame = () => {
     if (!SIZE) return showMessage('Enter the size of the field');
     if (Number(SIZE) > 40 || Number(SIZE) < 10) return showMessage('Possible size is between 10 and 40 units');
 
-    setSize(CANVAS_SIZE.w, CANVAS_SIZE.h)
+    setSize(getCanvaseSize())
     game = new Field({ size: Number(SIZE), difficulty: Number(DIFFICULTY) });
     settingsContainer.style.display = 'none';
     restartButton.style.display = 'block';
@@ -141,10 +135,18 @@ const animate = () => {
     game.print();
 }
 
+
+
 moveButtons.forEach(btn => btn.onclick = handleMove);
 operationButtons.forEach(btn => btn.onclick = handleGame);
 window.onkeydown = (e) => handleKeyPress(e, [handleMove])
 helpBtn.onclick = openLegend
 scoreBtn.onclick = openStats;
-
+window.onload = () => {
+    if (checkIsMobile()) {
+        setMobile();
+        preventDoubleTap(document.querySelector('.mobile-buttons'));
+    };
+    showMessage('Hello, visitor! To start a game, enter the size of the field.')
+};
 

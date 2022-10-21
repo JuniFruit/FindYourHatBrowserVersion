@@ -3,7 +3,6 @@ import { Field } from '../game.js';
 import {
     clearMessage,
     showMessage,
-    CANVAS_SIZE,
     handleKeyPress,
     openLegend,
     getQuery,
@@ -17,7 +16,8 @@ import {
     openStats,
     checkIsMobile,
     setMobile,
-    disableBtns
+    disableBtns,
+    getCanvaseSize
 } from '../utilities.js';
 
 import { receiveMessage, sendMessage } from './chat.js';
@@ -195,7 +195,7 @@ init();
 
 const createField = (serverField) => {
     game = new Field({ size: SIZE, isMultiplayer: true });
-    setSize(CANVAS_SIZE.w, CANVAS_SIZE.h);
+    setSize(getCanvaseSize());
     game.convertToField(serverField);
     game.print();
 

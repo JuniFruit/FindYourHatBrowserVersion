@@ -2,12 +2,27 @@ import { setSize } from "./draw.js";
 
 
 export const checkIsMobile = () => {
-    return window.innerWidth <= 768
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+    
+    const isMobBrowser = toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
+    return (window.innerWidth <= 768 && window.innerHeight <= 700) || isMobBrowser
 }
 
-export const CANVAS_SIZE = {
-    w: Math.floor(window.innerWidth - (window.innerWidth * 0.25)),
-    h: checkIsMobile() ?  350 : Math.floor(window.innerHeight - (window.innerHeight * 0.15))
+export const getCanvaseSize = () => {
+    return {
+        w: checkIsMobile() ? Math.floor(window.innerWidth) : Math.floor(window.innerWidth - (window.innerWidth * 0.25)),
+        h: checkIsMobile() ? 365 : Math.floor(window.innerHeight - (window.innerHeight * 0.15))
+    }
 }
 
 // Helper functions
@@ -17,7 +32,7 @@ export const preventDoubleTap = (element) => {
     let doubleTouchStartTimestamp = 0;
     element.addEventListener("touchstart", function (event) {
         let now = +(new Date());
-        if (doubleTouchStartTimestamp + 700 > now) {
+        if (doubleTouchStartTimestamp + 100 > now) {
             event.preventDefault();
         };
         doubleTouchStartTimestamp = now;
@@ -26,27 +41,31 @@ export const preventDoubleTap = (element) => {
 
 
 export const randomNum = (min, max) => {
-    return Math.floor(Math.random() * (max - min) + min);}
+    return Math.floor(Math.random() * (max - min) + min);
+}
 
 
 
 
-export const setMobile = () => {  
+export const setMobile = () => {
     document.querySelector('.mobile-buttons').style.display = 'flex';
-    document.querySelector('.moving').remove();
-    const canvasBox = document.querySelector('.canvasBox')
-    canvasBox.style.minWidth  = CANVAS_SIZE.w;
-    canvasBox.style.minHeight = CANVAS_SIZE.h;
+    document.querySelector('.moving').style.display = 'none';
+    const canvasBox = document.querySelector('#canvasBox')
+    const {w, h} = getCanvaseSize();
+    document.documentElement.style.setProperty('--canvasHeight', `${h}px`);
+    document.documentElement.style.setProperty('--canvasWidth', '100%');
+    // canvasBox.style.width = w;
+    // canvasBox.style.height = h;
 }
 
 //Gets coordinates from predefined set
 
 export const getCoordinates = (maxSize) => {
-    const possiblePlaces = [{x: 0, y: 0}, 
-        {x: maxSize-1, y: 0}, 
-        {x: 0, y: maxSize-1}, 
-        {x: maxSize-1, y: maxSize-1}, 
-        {x: Math.floor(maxSize/2),y: Math.floor(maxSize/2)}];
+    const possiblePlaces = [{ x: 0, y: 0 },
+    { x: maxSize - 1, y: 0 },
+    { x: 0, y: maxSize - 1 },
+    { x: maxSize - 1, y: maxSize - 1 },
+    { x: Math.floor(maxSize / 2), y: Math.floor(maxSize / 2) }];
 
     possiblePlaces.sort(() => 0.5 - Math.random());
     return [possiblePlaces[0], possiblePlaces[1]]
@@ -55,9 +74,9 @@ export const getCoordinates = (maxSize) => {
 // Counts the heuristics, used in A* algorithm
 
 export const heuristics = (current, endPoint) => {
-  
+
     let d = Math.abs(current.arrX - endPoint.arrX) + Math.abs(current.arrY - endPoint.arrY);
-    
+
     return d;
 }
 
@@ -77,43 +96,43 @@ export const showMessage = async (msg, delay = 20) => {
     const canvasBox = document.getElementById('canvasBox');
     clearMessage();
     const letters = msg.split('');
-  
+
     const text = document.createElement('h3');
     text.className = 'message'
     let i = 0;
     while (i < letters.length) {
-        await waitForMs(delay); 
+        await waitForMs(delay);
         text.append(letters[i]);
         canvasBox.append(text);
         i++
     }
-  
+
 
     return;
 }
 
 
-export const waitForMs = (ms)  => new Promise(resolve => setTimeout(resolve, ms))
+export const waitForMs = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const clearMessage = () => {
     const prevMessages = document.querySelectorAll('.message');
     prevMessages.forEach(msg => msg.remove())
 }
 
-export const disableBtns = (btns) => {    
+export const disableBtns = (btns) => {
     btns.forEach(btn => btn.disabled = true);
 }
 
-export const enableBtns = (btns) => {    
+export const enableBtns = (btns) => {
     btns.forEach(btn => btn.disabled = false);
- 
+
 }
 
-export const handleKeyPress = (e, callbackArr) => {    
-    
+export const handleKeyPress = (e, callbackArr) => {
+
     if (e.srcElement !== document.body) return;
 
-    callbackArr.forEach(callback => callback({target: {innerHTML: e.key}}));
+    callbackArr.forEach(callback => callback({ target: { innerHTML: e.key } }));
 }
 
 export const openLegend = (e) => {
@@ -141,9 +160,9 @@ export const updateScoreboard = (player, enemy) => {
     playerScore.innerHTML = player || 0;
     const enemyScore = document.getElementById('opponent');
     enemyScore.innerHTML = enemy || 0;
-}   
+}
 
-export const handleChatNotifications = (isNew) => { 
+export const handleChatNotifications = (isNew) => {
     const audioNotification = document.getElementById('chat-alert')
     const notification = document.querySelector('.chat-notification')
     if (isNew) {
@@ -184,9 +203,9 @@ export const countDownForElement = async (element, count) => {
     element.innerHTML = prevInnerHtml;
 }
 
-export const finishRound = async({msg, score, notice, buttonsToDisable = [], color}) => {
+export const finishRound = async ({ msg, score, notice, buttonsToDisable = [], color }) => {
     disableBtns(buttonsToDisable);
-    const {playerScore, enemyScore} = score;
+    const { playerScore, enemyScore } = score;
     await showScaleUpMsg(msg, color);
     await showMessage(notice);
     updateScoreboard(playerScore, enemyScore);

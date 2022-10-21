@@ -2,8 +2,8 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-export const setSize = (w, h) => {
-
+export const setSize = (size) => {
+    const {w, h} = size;
     canvas.width = w
     canvas.height = h
 
