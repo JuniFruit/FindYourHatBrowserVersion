@@ -185,5 +185,5 @@ export const openStats = (e) => {
 
 export const CANVAS_SIZE = {
     w: Math.floor(window.innerWidth - (window.innerWidth * 0.25)),
-    h: Math.floor(window.innerHeight - (window.innerHeight * 0.15))
+    h: checkIsMobile() ?  400 : Math.floor(window.innerHeight - (window.innerHeight * 0.15))
 }

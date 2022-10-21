@@ -53,7 +53,7 @@ button:disabled {
 
 input {
     outline: none;
-    appearance: none; 
+    appearance: none;   
     border: none;
     background-color: grey;    
     color: var(--textColor);
@@ -151,6 +151,10 @@ input::placeholder {
     font-size: 1.5rem;
     font-weight: 600;
     cursor: pointer;
+};
+
+#inputSize {
+    min-width: 5.5rem;
 }
 
 /* Operation buttons */
@@ -170,7 +174,7 @@ input::placeholder {
 
 .mobile-buttons {
     position: absolute;
-    top: 70%;
+    top: 65%;
     left: 0;
     width: 100%; 
     display: flex;
