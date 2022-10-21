@@ -20,12 +20,13 @@ export const removeFromArr = (arr, el) => {
 
 export const heuristics = (current, endPoint) => {
   
-    let d = Math.abs(current.vert - endPoint.vert) + Math.abs(current.hor - endPoint.hor);
+    let d = Math.abs(current.arrX - endPoint.arrX) + Math.abs(current.arrY - endPoint.arrY);
     
     return d;
 }
 
 export const showScaleUpMsg = async (msg, color) => {
+    if (!msg) return;
     clearMessage();
     const canvasBox = document.getElementById('canvasBox');
     const text = document.createElement('h2');
@@ -56,7 +57,7 @@ export const showMessage = async (msg, delay = 20) => {
 }
 
 
-const waitForMs = (ms)  => new Promise(resolve => setTimeout(resolve, ms))
+export const waitForMs = (ms)  => new Promise(resolve => setTimeout(resolve, ms))
 
 export const clearMessage = () => {
     const prevMessages = document.querySelectorAll('.message');
@@ -99,7 +100,7 @@ export const setQuery = (string) => {
     history.replaceState(null, '', `?room=${string}`)
 }
 
-export const updateMultiplayerScore = (player, enemy) => {
+export const updateScoreboard = (player, enemy) => {
     const playerScore = document.getElementById('player')
     playerScore.innerHTML = player || 0;
     const enemyScore = document.getElementById('opponent');
@@ -145,6 +146,25 @@ export const countDownForElement = async (element, count) => {
     }
     element.disabled = false;
     element.innerHTML = prevInnerHtml;
+}
+
+export const finishRound = async({msg, score, notice, buttonsToDisable, color}) => {
+    disableBtns(buttonsToDisable);
+    const {playerScore, enemyScore} = score;
+    await showScaleUpMsg(msg, color);
+    await showMessage(notice);
+    updateScoreboard(playerScore, enemyScore);
+}
+
+export const openStats = (e) => {
+
+    if (e.target.innerHTML === 'Tab' || e.target.innerHTML === 'Score') {
+        const stats = document.querySelector('.stats');
+        stats.classList.toggle('stats-active')
+
+    } else {
+        return;
+    }
 }
 
 // Constants

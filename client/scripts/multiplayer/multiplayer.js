@@ -10,12 +10,13 @@ import {
     openLegend,
     getQuery,
     setQuery,
-    updateMultiplayerScore,
+    updateScoreboard,
     handleChatNotifications,
     setUtilMsg,
-    resetCanvasSize,
-    showScaleUpMsg,
-    countDownForElement
+    resetCanvasSize,    
+    countDownForElement,
+    finishRound,
+    openStats
 } from '../utilities.js';
 
 import { receiveMessage, sendMessage } from './chat.js';
@@ -64,7 +65,7 @@ const init = () => {
         switch (type) {
             case SERVER.MESSAGE.WAITING_FOR_USER:
                 clearCanvas();
-                updateMultiplayerScore(0, 0)
+                updateScoreboard(0, 0)
                 setUtilMsg();
                 disableBtns(moveButtons);
                 resetCanvasSize();
@@ -87,23 +88,31 @@ const init = () => {
             case SERVER.MESSAGE.ROUND_LOST:
                 disableBtns(moveButtons)
                 clearCanvas();
-                await showScaleUpMsg('You\'ve Lost!', 'red')
-                await showMessage(payload.notice + '. Waiting for opponent to restart');
-                startButton.disabled = true
-                updateMultiplayerScore(payload.score, payload.enemyScore)
+                finishRound({
+                    msg: `You've Lost!`,
+                    score: { playerScore: payload.score, enemyScore: payload.enemyScore },
+                    notice: payload.notice + '. Waiting for opponent to restart',
+                    buttonsToDisable: [...moveButtons, startButton],
+                    color: 'red'
+                })
+
                 break;
             case SERVER.MESSAGE.ROUND_WON:
                 clearCanvas();
-                disableBtns(moveButtons)
-                await showScaleUpMsg('You\'ve Won!', 'Blue')
-                await showMessage(payload.notice + '. Press Restart to continue');
-                await countDownForElement(startButton, 3);                
-                updateMultiplayerScore(payload.score, payload.enemyScore)
+                finishRound({
+                    msg: `You've Won!`,
+                    score: { playerScore: payload.score, enemyScore: payload.enemyScore },
+                    notice: payload.notice + '. Press Restart to continue',
+                    buttonsToDisable: [...moveButtons],
+                    color: 'blue'
+                })                
+                await countDownForElement(startButton, 5);
+                
                 break;
             case SERVER.MESSAGE.OPPONENT_LEFT:
                 clearCanvas();
                 startButton.style.display = 'none'
-                showMessage(payload);         
+                showMessage(payload);
                 disableBtns(moveButtons);
                 break;
             case SERVER.MESSAGE.NO_ROOM_FOUND:
@@ -118,7 +127,7 @@ const init = () => {
                 clearCanvas();
                 await showMessage(payload.notice);
                 startButton.disabled = true;
-                updateMultiplayerScore(payload.score, payload.enemyScore);
+                updateScoreboard(payload.score, payload.enemyScore);
                 break;
 
 
@@ -155,7 +164,7 @@ const init = () => {
     //Errors
 
 
-    ioClient.on("connect_error", async() => {
+    ioClient.on("connect_error", async () => {
         clearCanvas();
         disableBtns(moveButtons);
         startButton.disabled = true;
@@ -200,7 +209,7 @@ const handleMove = (e) => {
     const moveBtn = document.querySelector('#move-button');
     if (moveBtn.disabled || moveBtn.style.display === 'none') return;
 
-    game.moveAround(e.target.innerHTML.toLowerCase());       
+    game.moveAround(e.target.innerHTML.toLowerCase());
     game.print();
 
     sendMove({ x: game.posVert, y: game.posHor });
@@ -222,16 +231,7 @@ const receiveObserverMoves = (pos1, pos2) => {
     game.print();
 }
 
-const openStats = (e) => {
 
-    if (e.target.innerHTML === 'Tab' || e.target.innerHTML === 'Score') {
-        const stats = document.querySelector('.stats');
-        stats.classList.toggle('stats-active')
-
-    } else {
-        return;
-    }
-}
 
 
 const setObserver = () => {

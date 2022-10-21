@@ -5,66 +5,52 @@ import { heuristics, removeFromArr, randomNum } from './utilities.js';
 
 // Resources
 const hat = 'green'
-const hole = 'black';
-const fieldCharacter = 'white';
-const pathCharacter = 'blue';
-const opponentPathCharacter = 'red';
-const trail = 'lightblue';
-const opponentTrail = 'coral';
+const hole = 'black'
+const fieldCharacter = 'white'
+const pathCharacter = 'blue'
+const opponentPathCharacter = 'red'
+const trail = 'lightblue'
+const opponentTrail = 'coral'
 const overlay = 'purple'
 
-// Stores information about a player
-
-class Player {
-    constructor(name, difficulty) {
-        this.name = name;
-        this.winsInRow = 0;
-        this.difficulty = difficulty;
-    }
-    // Resets winstreak if a player loses
-    resetWin() {
-        this.winsInRow = 0;
-    }
-    // Increments victories if a player succeeds
-    addWin() {
-        this.winsInRow += 1;
-    }
-}
-
-
 export class Field {
-    constructor({ size, name, difficulty, isMultiplayer = false }) {
+    constructor({ size, difficulty, isMultiplayer = false }) {
         this.posVert = 0;
         this.posHor = 0;
         this.endPosVert = 0;
         this.endPosHor = 0;
+        this.playerScore = 0;
         this.opponentPosVert = 0;
         this.opponentPosHor = 0;
         this.isMultiplayer = isMultiplayer;
         this.size = size;
         this.field = [];
-        this.isOver = false;     
-        this.playerStats = new Player(name, difficulty)
+        this.isOver = false;        
         this.difficulty = difficulty;
+        this.frames = 0;
+        this.AIdelay = 40;
+        this.AIpath = [];
+        this.AIscore = 0;
+        this.AIstep = 0;
     }
     //Convert generated arr from the server to game field (multiplayer)
-    convertToField(arr)  {
+    convertToField(arr) {
         this.field = []
-        for(let i=0;i<arr.length;i++){
+        for (let i = 0; i < arr.length; i++) {
             const line = [];
-            for(let j=0;j<arr[i].length;j++) {
+            for (let j = 0; j < arr[i].length; j++) {
                 const element = new FieldEl(arr[i][j]);
-                if (element._fill === pathCharacter) {
+                if (element.fill === pathCharacter) {
                     this.posVert = i;
                     this.posHor = j;
                     this.opponentPosVert = i;
                     this.opponentPosHor = j;
-                    element._fill = overlay;
-                } else if (element._fill === hat) {
+                    element.fill = overlay;
+                } else if (element.fill === hat) {
                     this.endPosHor = j;
                     this.endPosVert = i;
                 }
-                element.setSizeAndPos(j,i, this.size);
+                element.setSizeAndPos(j, i, this.size);
                 line.push(element)
             }
             this.field.push(line);
@@ -72,60 +58,64 @@ export class Field {
     }
 
     // The main function to start the game 
-    gameInit() { 
+    gameInit() {
+        this.AIpath = []
+        this.AIstep = 0;
+       
         this.generateField();
-        this.print();
+        this.opponentAI();
+
     }
-    
+
 
     // Handles the moving logic
 
-    moveAround(move) {        
-        
+    moveAround(move) {
+
         try {
 
-        
-        const prevPosVert = this.posVert;
-        const prevPosHor = this.posHor;
 
-        switch (move) {
-            case 'w':
-                this.posVert -= 1;
-                break;
-            case 's':
-                this.posVert += 1;
-                break;
-            case 'd':
-                this.posHor += 1;
-                break;
-            case 'a':
-                this.posHor -= 1;
-                break;
-        }
+            const prevPosVert = this.posVert;
+            const prevPosHor = this.posHor;
 
-        if (!this.isMultiplayer) {
-            const msg = this.isFinished()
-            if (msg) return msg;
+            switch (move) {
+                case 'w':
+                    this.posVert -= 1;
+                    break;
+                case 's':
+                    this.posVert += 1;
+                    break;
+                case 'd':
+                    this.posHor += 1;
+                    break;
+                case 'a':
+                    this.posHor -= 1;
+                    break;
+            }
 
-        }
+            if (!this.isMultiplayer) {
+                const msg = this.isFinished()
+                if (msg) return msg;
 
-        this.field[prevPosVert][prevPosHor]._fill === overlay
-        ? this.field[prevPosVert][prevPosHor]._fill = opponentPathCharacter : this.field[prevPosVert][prevPosHor]._fill = trail;
+            }
+
+            this.field[prevPosVert][prevPosHor].fill === overlay
+                ? this.field[prevPosVert][prevPosHor].fill = opponentPathCharacter : this.field[prevPosVert][prevPosHor].fill = trail;
 
 
-        if (this.isMultiplayer && this.isOverlay()) {
-            this.field[this.posVert][this.posHor]._fill = overlay;
-            return
-        }
-        this.field[this.posVert][this.posHor]._fill = pathCharacter;
-        }catch (e) {
+            if (this.isOverlay()) {
+                this.field[this.posVert][this.posHor].fill = overlay;
+                return
+            }
+            this.field[this.posVert][this.posHor].fill = pathCharacter;
+        } catch (e) {
 
         }
 
     }
 
-    //Checks if players overlay each other (multiplayer)
-    
+    //Checks if players overlay each other
+
     isOverlay() {
         const horizontal = this.posHor == this.opponentPosHor;
         const vertical = this.posVert == this.opponentPosVert;
@@ -134,60 +124,63 @@ export class Field {
         return false
     }
 
-    //Changes color of an element at the Player 2 pos (multiplayer)
+    //Changes color of an element at the Player 2 pos
     receiveOpponentsPos(pos) {
         if (!pos) return;
 
-        const {x,y} = pos;
+        const { x, y } = pos;
         const prevOpponentVert = this.opponentPosVert;
         const prevOpponentHor = this.opponentPosHor;
         this.opponentPosVert = x;
         this.opponentPosHor = y;
-        
+
         if (this.isOverlay()) {
-            this.field[prevOpponentVert][prevOpponentHor]._fill = opponentTrail;
-            this.field[this.opponentPosVert][this.opponentPosHor]._fill = overlay;
+            this.field[prevOpponentVert][prevOpponentHor].fill = opponentTrail;
+            this.field[this.opponentPosVert][this.opponentPosHor].fill = overlay;
         } else {
-            this.field[prevOpponentVert][prevOpponentHor]._fill = opponentTrail;
-            this.field[this.opponentPosVert][this.opponentPosHor]._fill = opponentPathCharacter;
-            this.field[this.posVert][this.posHor]._fill = pathCharacter;
+            this.field[prevOpponentVert][prevOpponentHor].fill = opponentTrail;
+            this.field[this.opponentPosVert][this.opponentPosHor].fill = opponentPathCharacter;
+            this.field[this.posVert][this.posHor].fill = pathCharacter;
         }
     }
 
     //Multiplayer observer
     receiveCurrentPos(pos) {
         if (!pos) return;
-        const {x,y} = pos;
+        const { x, y } = pos;
         const prevPosVert = this.posVert;
         const prevPosHor = this.posHor;
         this.posVert = x;
         this.posHor = y;
 
-        this.field[prevPosVert][prevPosHor]._fill === overlay
-        ? this.field[prevPosVert][prevPosHor]._fill = opponentPathCharacter : this.field[prevPosVert][prevPosHor]._fill = trail;
+        this.field[prevPosVert][prevPosHor].fill === overlay
+            ? this.field[prevPosVert][prevPosHor].fill = opponentPathCharacter : this.field[prevPosVert][prevPosHor].fill = trail;
 
-        this.field[this.posVert][this.posHor]._fill = pathCharacter;
+        this.field[this.posVert][this.posHor].fill = pathCharacter;
     }
 
     // Checks whether the finish condition is achieved
 
     isFinished() {
-  
+
         if (this.posVert < 0 || this.posHor < 0) {
-            this.playerStats.resetWin()
+            this.AIscore++
             return 'Oops, You fell out of the world!'
         }
         if (this.posVert > this.field.length - 1 || this.posHor > this.field[0].length - 1) {
-            this.playerStats.resetWin()
+            this.AIscore++
+
             return 'Oops, You fell out of the world!'
         }
-        if (this.field[this.posVert][this.posHor]._fill === hole) {
-            this.playerStats.resetWin()
+        if (this.field[this.posVert][this.posHor].fill === hole) {
+            this.AIscore++
+
             return 'You fell down in a hole!'
         }
-        if (this.field[this.posVert][this.posHor]._fill === hat) {
-            this.playerStats.addWin();
-            return `Congratulations, ${this.playerStats.name}! You\'ve found the hat!`
+        if (this.field[this.posVert][this.posHor].fill === hat) {
+            this.playerScore++
+
+            return `Congratulations! You\'ve found the hat!`
         }
 
         return null;
@@ -202,27 +195,20 @@ export class Field {
         return [vertical, horizontal]
     }
 
-    placeHat() {
+    getStartAndEnd() {
+        const [playerVertical, playerHorizontal] = this.getRandomCoordinates();
+        const [hatVertical, hatHorizontal] = this.getRandomCoordinates();
 
-        const [vertical, horizontal] = this.getRandomCoordinates();
-        const character = this.field[vertical][horizontal];
-        if (character._fill !== pathCharacter) {
-            this.field[vertical][horizontal] = new FieldEl(hat);
-            // Setting ending position
-            this.endPosHor = horizontal;
-            this.endPosVert = vertical;
-            return
-        } else {
-            this.placeHat();
-        }
-    }
+        if ((playerHorizontal === hatHorizontal) && (playerVertical === hatVertical)) return this.getStartAndEnd();
 
-    placeCharacter() {
-        const [vertical, horizontal] = this.getRandomCoordinates();
-        this.field[vertical][horizontal] = new FieldEl(pathCharacter);
-        // Setting starting position
-        this.posHor = horizontal;
-        this.posVert = vertical;
+        this.posVert = playerVertical;
+        this.posHor = playerHorizontal;
+        this.endPosVert = hatVertical;
+        this.endPosHor = hatHorizontal;
+        this.opponentPosVert = this.posVert;
+        this.opponentPosHor = this.posHor;
+        this.field[this.posVert][this.posHor] = new FieldEl(overlay);      
+        this.field[this.endPosVert][this.endPosHor] = new FieldEl(hat);        
     }
 
 
@@ -245,145 +231,139 @@ export class Field {
         }
 
 
-        // Placing our character at random pos
+        this.getStartAndEnd();
 
-        this.placeCharacter();
-
-        // Placing our hat at a random pos
-        this.placeHat()
-
-
-        if (this.isPlayable(this.field) === false) {
-            this.generateField();
-        } else {
-
-            for (let i = 0; i < this.field.length; i++) {
-                for (let j = 0; j < this.field[i].length; j++) {
-                    this.field[i][j] = new FieldEl(this.field[i][j].char._fill)
-                    this.field[i][j].setSizeAndPos(j, i, this.size)
-                }
+        for (let i = 0; i < this.field.length; i++) {
+            for (let j = 0; j < this.field[i].length; j++) {
+                this.field[i][j].setSizeAndPos(j, i, this.size)
+                this.field[i][j].addNeighbors(this.field)
             }
+        }
+
+
+        if (this.depthFirst(this.field[this.posVert][this.posHor]) === false) return this.generateField();
+
+
+    }
+
+
+    depthFirst(start) {
+
+        let stack = [start];
+        let visited = [start];
+
+        while (stack.length) {
+            let current = stack.pop();
+
+            if (current.fill === hat) {
+               
+                let prev = current
+                let path = []
+                while (prev.fill !== overlay) {
+                    path.push(prev);
+                    prev = prev.parent;
+                }
+                this.AIpath = path.reverse();
+                return true;
+
+            };
+
+            current.edges.forEach(edge => {
+                if (edge.fill === hole) return;
+
+                if (!visited.includes(edge)) {
+                    visited.push(edge);
+                    edge.parent = current;
+                    stack.push(edge);
+                }
+            })
+
+        }
+
+        return false;
+
+    }
+
+    aStarSearch = (start, endNode) => {
+        const openSet = [start];
+        const closedSet = [];
+        
+        while (openSet.length) {
+            let lowestInd = 0;
+            for (let i=0; i<openSet.length;i++) {
+                if (openSet[i].f < openSet[lowestInd].f) {lowestInd = i};
+            }
+            
+            let current = openSet[lowestInd];
+            if (current === endNode) {
+                let currentNode = current;
+                let path = []
+                while (currentNode.parent) {
+                    path.push(currentNode);
+                    currentNode = currentNode.parent;
+                }
+                return this.AIpath = path.reverse();
+            }
+            openSet.splice(lowestInd, 1);
+            closedSet.push(current);
+    
+            current.edges.forEach(edge => {
+                const neighbor = edge
+                if (neighbor.fill !== hole && !closedSet.includes(neighbor)) {
+                    const gScore = current.g + 1;
+                    if (openSet.includes(neighbor)) {
+                        if (gScore < neighbor.g) neighbor.g = gScore;
+                    } else {
+                        neighbor.g = gScore;
+                        neighbor.parent = current;
+                        openSet.push(neighbor)
+                    }
+                    neighbor.h = heuristics(neighbor, endNode);
+                    neighbor.f = neighbor.g + neighbor.h;
+                } else {
+                    return
+                }
+    
+            })
+    
+        }
+        return;
+    }
+
+    opponentAI() {
+
+        if (Number(this.difficulty) == 2) {
+            this.AIdelay = 30;
+            this.depthFirst(this.field[this.opponentPosVert][this.opponentPosHor]);
+
+        };
+        if (Number(this.difficulty) == 4) {
+            this.AIdelay = 20;
+            this.aStarSearch(this.field[this.opponentPosVert][this.opponentPosHor], this.field[this.endPosVert][this.endPosHor]);
         }
     }
 
-    // Checks if a level is beatable by using A* algorithm
-    isPlayable(generatedArr) {
+    animatePathAI() {
+        if (this.isOver) return;
 
-        const savedField = generatedArr;
-
-
-        let startVert = this.posVert;
-        let startHor = this.posHor;
-
-        let endVert = this.endPosVert;
-        let endHor = this.endPosHor;
-
-        let start;
-        let end;
-
-        const openSet = [];
-        const closedSet = [];
-
-        class Spot {
-            constructor(i, j, char) {
-                this.vert = i;
-                this.hor = j;
-                this.f = 0;
-                this.g = 0;
-                this.h = 0;
-                this.neighbors = [];
-                this.previous = undefined;
-                this.obstacle = false;
-                this.char = char;
+        if (this.frames % this.AIdelay === 1) {
+            if (!this.AIpath[this.AIstep]) {
+                this.isOver = true;                
+                return;
             }
-            addNeighbors(arr) {
-                let vertPos = this.vert;
-                let horPos = this.hor;
-                if (horPos < arr[vertPos].length - 1) {
-                    this.neighbors.push(arr[vertPos][horPos + 1])
-                }
-                if (horPos > 0) {
-                    this.neighbors.push(arr[vertPos][horPos - 1])
-                }
-                if (vertPos < arr.length - 1) {
-                    this.neighbors.push(arr[vertPos + 1][horPos]);
-                }
-                if (vertPos > 0) {
-                    this.neighbors.push(arr[vertPos - 1][horPos])
-                }
-            }
-
+           
+            this.receiveOpponentsPos({ x: this.AIpath[this.AIstep].arrX, y: this.AIpath[this.AIstep].arrY })
+            // this.print();
+            this.AIstep++
         }
 
-        for (let i = 0; i < savedField.length; i++) {
-            for (let j = 0; j < savedField[i].length; j++) {
-                if (savedField[i][j]._fill === hole) {
-                    savedField[i][j] = new Spot(i, j, savedField[i][j]);
-                    savedField[i][j].obstacle = true;
-                } else {
-                    savedField[i][j] = new Spot(i, j, savedField[i][j]);
-                }
+    }
 
+    animate() {
 
-            }
-        }
-        for (let i = 0; i < savedField.length; i++) {
-            for (let j = 0; j < savedField[i].length; j++) {
-                savedField[i][j].addNeighbors(savedField);
-            }
-        }
-
-
-        start = savedField[startVert][startHor];
-        end = savedField[endVert][endHor];
-
-        openSet.push(start);
-        while (openSet.length > 0) {
-            let winner = 0;
-
-            for (let i = 0; i < openSet.length; i++) {
-                if (openSet[i].f < openSet[winner].f) {
-                    winner = i;
-                }
-            }
-
-            let current = openSet[winner];
-
-            if (current === end) {
-                
-                return true
-            }
-            removeFromArr(openSet, current);
-            closedSet.push(current)
-
-            let neighborsOfSpot = current.neighbors;
-
-            for (let i = 0; i < neighborsOfSpot.length; i++) {
-                let neighborOfSpot = neighborsOfSpot[i];
-                if (!closedSet.includes(neighborOfSpot) && !neighborOfSpot.obstacle) {
-                    let tempG = current.g + 1;
-                    if (openSet.includes(neighborOfSpot)) {
-                        if (tempG < neighborOfSpot.g) {
-                            neighborOfSpot.g = tempG;
-                        }
-                    } else {
-                        neighborOfSpot.g = tempG;
-                        openSet.push(neighborOfSpot)
-                    }
-
-                    neighborOfSpot.h = heuristics(neighborOfSpot, end);
-                    neighborOfSpot.f = neighborOfSpot.g + neighborOfSpot.h;
-
-                }
-
-            }
-
-        }
-
-
-
-        return false
-
+        window.requestAnimationFrame(this.animate);
+        console.log('gi')
+        this.print()
     }
 
 
@@ -393,6 +373,8 @@ export class Field {
                 this.field[i][j].draw();
             }
         }
+
+
     }
 }
 

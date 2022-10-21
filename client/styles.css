@@ -214,7 +214,11 @@ input::placeholder {
 }
 
 input:checked {
-    background-color: var(--textColor)
+    background-color: var(--textColor);
+    
+}
+-webkit-input:checked {
+    background-color: var(--textColor);
 }
 
 
