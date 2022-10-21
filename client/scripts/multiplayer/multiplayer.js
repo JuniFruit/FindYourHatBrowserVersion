@@ -288,7 +288,7 @@ chatBtn.onclick = (e) => {
 
 window.onload = () => {
     if (checkIsMobile()) setMobile();
-    moveButtons.forEach(btn => preventDoubleTap(btn))
+    // moveButtons.forEach(btn => preventDoubleTap(btn))
 };
 helpBtn.onclick = openLegend;
 exitBtn.onclick = () => window.location.href = MAIN_PAGE;

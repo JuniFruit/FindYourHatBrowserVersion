@@ -58,7 +58,7 @@ const redirectToMultiplayer = () => {
 }
 
 const handleMove = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     if (game.isOver || !game) return;
     const message = game.moveAround(e.target.innerHTML.toLowerCase());
 
