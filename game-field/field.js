@@ -1,4 +1,3 @@
-
 const hat = 'green'
 const hole = 'black';
 const fieldCharacter = 'white';
@@ -11,15 +10,18 @@ const randomize = (max) => {
     return Math.floor(Math.random() * max);
 }
 
-const getStartAndEnd = (size) => {
-    const playerVertical = randomize(size);
-    const playerHorizontal = randomize(size);
-    const hatVertical = randomize(size);
-    const hatHorizontal = randomize(size);
-    if ((playerHorizontal === hatHorizontal) && (playerVertical === hatVertical)) return getStartAndEnd(size);
+const getCoordinates = (maxSize) => {
+    const possiblePlaces = [
+        { x: 0, y: 0 },
+        { x: maxSize - 1, y: 0 },
+        { x: 0, y: maxSize - 1 },
+        { x: maxSize - 1, y: maxSize - 1 },
+        {x: Math.floor(maxSize/2),y: Math.floor(maxSize/2)}];
 
-    return [[playerVertical, playerHorizontal], [hatVertical, hatHorizontal]];
+    possiblePlaces.sort(() => 0.5 - Math.random());
+    return [possiblePlaces[0], possiblePlaces[1]]
 }
+
 
 class Spot {
     constructor(x, y, type) {
@@ -78,12 +80,11 @@ const generateField = (size, difficulty) => {
         }
     }
 
-    const playerCoordinates = getStartAndEnd(size)[0];
-    const hatCoordinates = getStartAndEnd(size)[1];
-    field[playerCoordinates[0]][playerCoordinates[1]].type = pathCharacter;
-    field[hatCoordinates[0]][hatCoordinates[1]].type = hat;
+    const [playerPos, hatPos] = getCoordinates(size);
+    field[playerPos.x][playerPos.y].type = pathCharacter;
+    field[hatPos.x][hatPos.y].type = hat;
 
-    if (!checkIsPlayable(field[playerCoordinates[0]][playerCoordinates[1]])) return generateField(size, difficulty);
+    if (!checkIsPlayable(field[playerPos.x][playerPos.y])) return generateField(size, difficulty);
 
     return field
 
@@ -96,8 +97,8 @@ let CLIENT_ROOM_FIELDS = new Map();
 //Create field for a specific room and save it in a hash map
 
 const createServerField = (room) => {
-    
-    if (CLIENT_ROOM_FIELDS.has(room)) return CLIENT_ROOM_FIELDS.get(room); 
+
+    if (CLIENT_ROOM_FIELDS.has(room)) return CLIENT_ROOM_FIELDS.get(room);
     const serverField = generateField(SIZE, DIFFICULTY);
 
 
@@ -127,19 +128,19 @@ const checkWinConditions = (x, y, room) => {
     if (x < 0 || y < 0) {
         msg = 'out of the world'
         clearFields(room);
-        return [msg, isFinished = true, isWinner =false]
+        return [msg, isFinished = true, isWinner = false]
     }
     if (x > GAME_ROOM_FIELDS.get(room).length - 1 || y > GAME_ROOM_FIELDS.get(room)[0].length - 1) {
         msg = 'out of the world'
         clearFields(room);
 
-        return [msg, isFinished = true, isWinner =false]
+        return [msg, isFinished = true, isWinner = false]
     }
     if (GAME_ROOM_FIELDS.get(room)[x][y].type === hole) {
         msg = 'down in the hole'
         clearFields(room);
 
-        return [msg, isFinished = true, isWinner =false]
+        return [msg, isFinished = true, isWinner = false]
     }
     if (GAME_ROOM_FIELDS.get(room)[x][y].type === hat) {
         msg = 'found the hat'

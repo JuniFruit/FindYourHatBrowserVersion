@@ -39,3 +39,4 @@ Only two players can play, so it's the Duel type game. However, your game can be
 * Now you can play against AI on different difficulty levels
 * UI fixes
 * Different difficulty levels features different search algorithms for AI, including depth first search and A* star
+* Added mobile support

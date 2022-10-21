@@ -81,16 +81,28 @@
                                 <div class="legend-square overlay"></div>
                                 <span class="legend-description">You're both at the same position</span>
                             </div>
-        
+                            <div>                                
+                                <span class="legend-description moving">Use WASD to move around. <br>Make sure to enable English keyboard</span>
+                            </div>
+
                         </div>
                     </div>
-                </section> 
+                </section>
+                <section class="mobile-buttons">
+                    <div class="left-buttons">
+                        <button id="move-button" >W</button>
+                        <button id="move-button" >S</button>
+                    </div>
+                    <div class="right-buttons">
+                        <button id="move-button" >A</button>
+                        <button id="move-button" >D</button>
+                    </div>
+                </section>
 
             </div>
 
             <div class="dialogBox" id="dialogBox">
                 <div class="settings" id="settings">
-                    <input id="inputName" value="" placeholder="Your Name" />
                     <input id="inputSize" type="number" min="10" step="5" max="40" placeholder="Size" />
                     <fieldset class="radio-container">
                         <div class="easy-option">
@@ -112,21 +124,11 @@
                 <button class="restart-button operation-button" id="restart-button">Restart</button>
                 <button class="multiplayer operation-button" id="multiplayer-button">Multiplayer</button>
                 <div class="secondary-buttons">
-                    <button class="enter operation-button" id="enter-button">Start</button>
+                    <button class="enter operation-button" id="enter-button">Solo</button>
                     <button class="operation-button" id="help">Help</button>
                     <button class="operation-button" style="display: none" id="score">Score</button>
                 </div>
-            </div>
-            <div class="direction-buttons" id="direction-buttons">
-                <div class="w-button" id="w-button">
-                    <button id="move-button" disabled>W</button>
-                </div>
-                <div class="asd-buttons" id="asd-buttons">
-                    <button id="move-button" disabled>A</button>
-                    <button id="move-button" disabled>S</button>
-                    <button id="move-button" disabled>D</button>
-                </div>
-            </div>
+            </div>          
 
         </section>
 

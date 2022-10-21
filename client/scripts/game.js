@@ -1,7 +1,7 @@
 // Imports
 
 import { FieldEl } from './draw.js'
-import { heuristics, removeFromArr, randomNum } from './utilities.js';
+import { getCoordinates, heuristics, randomNum } from './utilities.js';
 
 // Resources
 const hat = 'green'
@@ -187,24 +187,12 @@ export class Field {
 
     }
 
-
-    getRandomCoordinates() {
-        const horizontal = randomNum(0, this.size)
-        const vertical = randomNum(0, this.size);
-
-        return [vertical, horizontal]
-    }
-
     getStartAndEnd() {
-        const [playerVertical, playerHorizontal] = this.getRandomCoordinates();
-        const [hatVertical, hatHorizontal] = this.getRandomCoordinates();
-
-        if ((playerHorizontal === hatHorizontal) && (playerVertical === hatVertical)) return this.getStartAndEnd();
-
-        this.posVert = playerVertical;
-        this.posHor = playerHorizontal;
-        this.endPosVert = hatVertical;
-        this.endPosHor = hatHorizontal;
+        const [playerPos, hatPos] = getCoordinates(this.size);  
+        this.posVert = playerPos.x;
+        this.posHor = playerPos.y;
+        this.endPosVert = hatPos.x;
+        this.endPosHor = hatPos.y;
         this.opponentPosVert = this.posVert;
         this.opponentPosHor = this.posHor;
         this.field[this.posVert][this.posHor] = new FieldEl(overlay);      
@@ -333,12 +321,12 @@ export class Field {
     opponentAI() {
 
         if (Number(this.difficulty) == 2) {
-            this.AIdelay = 30;
+            this.AIdelay = 25;
             this.depthFirst(this.field[this.opponentPosVert][this.opponentPosHor]);
 
         };
         if (Number(this.difficulty) == 4) {
-            this.AIdelay = 20;
+            this.AIdelay = 15;
             this.aStarSearch(this.field[this.opponentPosVert][this.opponentPosHor], this.field[this.endPosVert][this.endPosHor]);
         }
     }
@@ -350,21 +338,12 @@ export class Field {
             if (!this.AIpath[this.AIstep]) {
                 this.isOver = true;                
                 return;
-            }
-           
-            this.receiveOpponentsPos({ x: this.AIpath[this.AIstep].arrX, y: this.AIpath[this.AIstep].arrY })
-            // this.print();
+            }           
+            this.receiveOpponentsPos({ x: this.AIpath[this.AIstep].arrX, y: this.AIpath[this.AIstep].arrY })           
             this.AIstep++
         }
 
-    }
-
-    animate() {
-
-        window.requestAnimationFrame(this.animate);
-        console.log('gi')
-        this.print()
-    }
+    }  
 
 
     print() {

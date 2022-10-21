@@ -3,6 +3,7 @@ const path = require('path')
 const socketIo = require('socket.io');
 const express = require('express');
 const { createServerField, checkWinConditions, checkFieldExist } = require('./game-field/field.js');
+
 const PORT = process.env.PORT || 4000;
 const app = express();
 const httpServer = http.createServer(app);

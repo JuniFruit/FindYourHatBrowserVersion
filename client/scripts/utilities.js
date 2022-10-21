@@ -8,12 +8,26 @@ export const randomNum = (min, max) => {
 }
 
 
-export const removeFromArr = (arr, el) => {
-    for (let i=arr.length -1; i>=0; i--) {
-        if (arr[i] === el) {
-            arr.splice(i,1);
-        }
-    }
+export const checkIsMobile = () => {
+    return window.innerWidth <= 768
+}
+
+export const setMobile = () => {  
+    document.querySelector('.mobile-buttons').style.display = 'flex';
+    document.querySelector('.moving').remove();
+}
+
+//Gets coordinates from predefined set
+
+export const getCoordinates = (maxSize) => {
+    const possiblePlaces = [{x: 0, y: 0}, 
+        {x: maxSize-1, y: 0}, 
+        {x: 0, y: maxSize-1}, 
+        {x: maxSize-1, y: maxSize-1}, 
+        {x: Math.floor(maxSize/2),y: Math.floor(maxSize/2)}];
+
+    possiblePlaces.sort(() => 0.5 - Math.random());
+    return [possiblePlaces[0], possiblePlaces[1]]
 }
 
 // Counts the heuristics, used in A* algorithm
@@ -148,7 +162,7 @@ export const countDownForElement = async (element, count) => {
     element.innerHTML = prevInnerHtml;
 }
 
-export const finishRound = async({msg, score, notice, buttonsToDisable, color}) => {
+export const finishRound = async({msg, score, notice, buttonsToDisable = [], color}) => {
     disableBtns(buttonsToDisable);
     const {playerScore, enemyScore} = score;
     await showScaleUpMsg(msg, color);

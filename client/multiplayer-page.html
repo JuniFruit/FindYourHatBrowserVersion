@@ -98,23 +98,28 @@
                                 <div class="legend-square overlay"></div>
                                 <span class="legend-description">You're both at the same position</span>
                             </div>
-        
+                            <div>
+                                <span class="legend-description moving">Use WASD to move around. <br>Make sure to enable
+                                    English keyboard</span>
+
+                            </div>
+
                         </div>
                     </div>
-                </section> 
-                         
+                </section>
+                <section class="mobile-buttons">
+                    <div class="left-buttons">
+                        <button id="move-button">W</button>
+                        <button id="move-button">S</button>
+                    </div>
+                    <div class="right-buttons">
+                        <button id="move-button">A</button>
+                        <button id="move-button">D</button>
+                    </div>
+                </section>
+
             </div>
             <div class="util-msg">
-            </div>
-            <div class="direction-buttons" id="direction-buttons">
-                <div class="w-button" id="w-button">
-                    <button id="move-button" disabled>W</button>
-                </div>
-                <div class="asd-buttons" id="asd-buttons">
-                    <button id="move-button" disabled>A</button>
-                    <button id="move-button" disabled>S</button>
-                    <button id="move-button" disabled>D</button>
-                </div>
             </div>
 
             <div class="dialogBox" id="dialogBox">
@@ -129,11 +134,11 @@
                     <button class="operation-button" id="score">Score</button>
                 </div>
             </div>
-           
+
 
         </section>
-        
-        
+
+
         <section class="audio">
             <audio id="chat-alert" src="./assets/lg_pop.mp3" type="audio/mp3"></audio>
         </section>

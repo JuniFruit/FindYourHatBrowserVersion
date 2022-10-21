@@ -37,6 +37,7 @@ button {
     background: transparent;
     padding: .5rem;    
     background-color: var(--textColor);
+    color: black;
     font-size: 1.1rem;
     border-radius: .3rem;
     cursor: pointer;    
@@ -167,10 +168,40 @@ input::placeholder {
 
 /* Move Buttons */
 
-.w-button,
-.asd-buttons {
+.mobile-buttons {
+    position: absolute;
+    top: 70%;
+    left: 0;
+    width: 100%; 
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    display: none;
+}
+#move-button {
+    background-color: gray;
+    color: rgba(0, 0, 0, 0.253);
+    opacity: .3;
+    width: 3rem;
+    height: 3rem;
+}
+
+#move-button:hover {
+    opacity: .5;
+}
+
+.left-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 3rem;
+}
+
+.right-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 1rem;
 }
 
 .restart-button {

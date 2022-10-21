@@ -9,47 +9,46 @@ import {
     resetCanvasSize,
     countDownForElement,
     finishRound,
-    openStats
+    openStats,
+    disableBtns,   
+    checkIsMobile,
+    setMobile
 } from "./utilities.js";
 
 const enterButton = document.getElementById('enter-button');
-const moveButtons = document.querySelectorAll('#move-button');
 const settingsContainer = document.getElementById('settings');
 const restartButton = document.getElementById('restart-button')
 const operationButtons = document.querySelectorAll('.operation-button');
 const helpBtn = document.getElementById('help');
 const multiplayerBtn = document.getElementById('multiplayer-button');
 const scoreBtn = document.getElementById('score');
+const moveButtons = document.querySelectorAll('#move-button');
 
-window.onload = () => showMessage('Hello, visitor! To start a game, enter your name and size of the field.');
+window.onload = () => {
+    if (checkIsMobile()) setMobile();
+    showMessage('Hello, visitor! To start a game, enter the size of the field.')
+};
 
 let game;
-let NAME = null;
 let SIZE = null;
 let DIFFICULTY = null;
 
-const startGame = async () => {
+const initGame = () => {
     grabInputs();
-
-    if (!NAME || !SIZE) return showMessage('Enter your name and size of the field');
+    if (!SIZE) return showMessage('Enter the size of the field');
     if (Number(SIZE) > 40 || Number(SIZE) < 10) return showMessage('Possible size is between 10 and 40 units');
-    moveButtons.forEach(btn => btn.disabled = false)
 
     setSize(CANVAS_SIZE.w, CANVAS_SIZE.h)
-    game = new Field({ name: NAME, size: Number(SIZE), difficulty: Number(DIFFICULTY) });
-
+    game = new Field({ size: Number(SIZE), difficulty: Number(DIFFICULTY) });
     settingsContainer.style.display = 'none';
     restartButton.style.display = 'block';
     enterButton.innerHTML = 'Exit';
     multiplayerBtn.style.display = 'none';
     scoreBtn.style.display = 'block'
-    game.gameInit();
-
-    animate();
+    startGame();
 }
 
 const grabInputs = () => {
-    NAME = document.getElementById('inputName').value;
     SIZE = document.getElementById('inputSize').value;
     DIFFICULTY = document.querySelector('input[name="difficulty"]:checked').value;
 
@@ -60,16 +59,15 @@ const redirectToMultiplayer = () => {
 }
 
 const handleMove = (e) => {
-    if (game.isOver) return;
+    if (game.isOver || !game) return;
     const message = game.moveAround(e.target.innerHTML.toLowerCase());
 
     if (message) {
         clearCanvas();
-        game.isOver = true;        
-        finishRound({            
+        game.isOver = true;
+        finishRound({
             score: { playerScore: game.playerScore, enemyScore: game.AIscore },
-            notice: message + ' Press Restart to continue',
-            buttonsToDisable: [...moveButtons]
+            notice: message + ' Press Restart to continue'
         })
         countDownForElement(restartButton, 3)
     }
@@ -77,21 +75,20 @@ const handleMove = (e) => {
 }
 
 const exitGame = () => {
-    enterButton.innerHTML = 'Start';
+    enterButton.innerHTML = 'Solo';
     settingsContainer.style.display = 'block'
     restartButton.style.display = 'none';
     multiplayerBtn.style.display = 'block';
     scoreBtn.style.display = 'none';
     resetCanvasSize();
-    moveButtons.forEach(btn => btn.disabled = true)
     game = null;
-    window.cancelAnimationFrame(animate);
 }
 
-const restartGame = () => {
-    moveButtons.forEach(btn => btn.disabled = false)
+const startGame = () => {
+    disableBtns([restartButton])
     game.isOver = false;
     game.gameInit();
+
     animate();
 
 }
@@ -102,14 +99,14 @@ const handleGame = (e) => {
     clearMessage();
 
     switch (e.target.innerHTML) {
-        case 'Start':
-            startGame()
+        case 'Solo':
+            initGame()
             break;
         case 'Exit':
             exitGame();
             break;
         case 'Restart':
-            restartGame();
+            startGame();
             break;
         case 'Multiplayer':
             redirectToMultiplayer();
@@ -122,12 +119,11 @@ const animate = () => {
     if ((game.opponentPosVert === game.endPosVert) && (game.opponentPosHor === game.endPosHor)) {
         clearCanvas();
         game.AIscore++;
-     
+        game.isOver = true;
         finishRound({
             msg: `You've Lost!`,
             score: { playerScore: game.playerScore, enemyScore: game.AIscore },
             notice: 'Press Restart to continue',
-            buttonsToDisable: [...moveButtons],
             color: 'red'
         })
         countDownForElement(restartButton, 3);
@@ -137,7 +133,6 @@ const animate = () => {
     window.requestAnimationFrame(animate);
     game.frames++;
     game.animatePathAI();
-    console.log('animate')
     game.print();
 }
 

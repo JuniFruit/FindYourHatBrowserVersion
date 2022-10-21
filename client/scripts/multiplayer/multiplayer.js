@@ -3,8 +3,6 @@ import { Field } from '../game.js';
 import {
     clearMessage,
     showMessage,
-    enableBtns,
-    disableBtns,
     CANVAS_SIZE,
     handleKeyPress,
     openLegend,
@@ -13,17 +11,19 @@ import {
     updateScoreboard,
     handleChatNotifications,
     setUtilMsg,
-    resetCanvasSize,    
+    resetCanvasSize,
     countDownForElement,
     finishRound,
-    openStats
+    openStats,
+    checkIsMobile,
+    setMobile,
+    disableBtns
 } from '../utilities.js';
 
 import { receiveMessage, sendMessage } from './chat.js';
 
 //DOM
 
-const moveButtons = document.querySelectorAll('#move-button');
 const startButton = document.getElementById('enter-button')
 const form = document.querySelector('.chat-inputs');
 const chatBtn = document.getElementById('chat');
@@ -32,6 +32,10 @@ const exitBtn = document.getElementById('exit');
 const spinner = document.querySelector('.spinner');
 const scoreBtn = document.getElementById('score');
 const utilMsg = document.querySelector('.util-msg')
+const moveButtons = document.querySelectorAll('#move-button')
+
+
+
 //Constants
 
 const MAIN_PAGE = 'https://findyourhat2.herokuapp.com/';
@@ -54,7 +58,7 @@ const init = () => {
 
     ioClient.on('field-return', field => {
         clearMessage();
-        startButton.disabled = true
+        disableBtns([startButton])
         createField(field);
     })
 
@@ -67,11 +71,11 @@ const init = () => {
                 clearCanvas();
                 updateScoreboard(0, 0)
                 setUtilMsg();
-                disableBtns(moveButtons);
                 resetCanvasSize();
                 await showMessage(payload);
+                game = null;
                 startButton.innerHTML = 'Waiting for a player';
-                startButton.disabled = true;
+                disableBtns([startButton])
                 spinner.style.display = 'block';
                 setQuery(room);
                 break;
@@ -80,40 +84,40 @@ const init = () => {
                 utilMsg.innerHTML = '';
                 setQuery('')
                 startButton.innerHTML = 'Restart'
-                startButton.disabled = true
-                enableBtns(moveButtons);
+                disableBtns([startButton])
                 start()
                 break;
 
             case SERVER.MESSAGE.ROUND_LOST:
-                disableBtns(moveButtons)
                 clearCanvas();
+                game.isOver = true
                 finishRound({
                     msg: `You've Lost!`,
                     score: { playerScore: payload.score, enemyScore: payload.enemyScore },
                     notice: payload.notice + '. Waiting for opponent to restart',
-                    buttonsToDisable: [...moveButtons, startButton],
+                    buttonsToDisable: [startButton],
                     color: 'red'
                 })
 
                 break;
             case SERVER.MESSAGE.ROUND_WON:
                 clearCanvas();
+                game.isOver = true
                 finishRound({
                     msg: `You've Won!`,
                     score: { playerScore: payload.score, enemyScore: payload.enemyScore },
                     notice: payload.notice + '. Press Restart to continue',
-                    buttonsToDisable: [...moveButtons],
                     color: 'blue'
-                })                
+                })
                 await countDownForElement(startButton, 5);
-                
+
                 break;
             case SERVER.MESSAGE.OPPONENT_LEFT:
                 clearCanvas();
+                game.isOver = true;
                 startButton.style.display = 'none'
                 showMessage(payload);
-                disableBtns(moveButtons);
+
                 break;
             case SERVER.MESSAGE.NO_ROOM_FOUND:
                 await showMessage(payload);
@@ -121,12 +125,11 @@ const init = () => {
                 break;
             case SERVER.MESSAGE.OBSERVER_NEW_CONNECTION:
                 setObserver()
-                start();
+                start();               
                 break;
             case SERVER.MESSAGE.OBSERVER_UPDATE_GAME:
                 clearCanvas();
-                await showMessage(payload.notice);
-                startButton.disabled = true;
+                await showMessage(payload.notice);                
                 updateScoreboard(payload.score, payload.enemyScore);
                 break;
 
@@ -166,8 +169,8 @@ const init = () => {
 
     ioClient.on("connect_error", async () => {
         clearCanvas();
-        disableBtns(moveButtons);
-        startButton.disabled = true;
+
+        disableBtns([startButton]);
         await showMessage('Lost connection to the server. Trying to establish a new connection')
         setTimeout(() => {
             socket.connect();
@@ -195,19 +198,18 @@ const createField = (serverField) => {
     setSize(CANVAS_SIZE.w, CANVAS_SIZE.h);
     game.convertToField(serverField);
     game.print();
-    enableBtns(moveButtons);
+
 }
 
 const start = () => {
-
+   
     ioClient.emit('generate');
 }
 
 
 
 const handleMove = (e) => {
-    const moveBtn = document.querySelector('#move-button');
-    if (moveBtn.disabled || moveBtn.style.display === 'none') return;
+    if (game.isOver || !game) return;
 
     game.moveAround(e.target.innerHTML.toLowerCase());
     game.print();
@@ -235,15 +237,10 @@ const receiveObserverMoves = (pos1, pos2) => {
 
 
 const setObserver = () => {
-    moveButtons.forEach(btn => {
-        btn.style.display = 'none';
-
-        console.log(btn)
-    })
     startButton.innerHTML = 'Watching ongoing game'
-    startButton.disabled = true;
+    disableBtns([startButton]);
     chatBtn.style.display = 'none';
-
+    document.querySelector('.mobile-buttons').style.display = 'none';
     const playerScoreHeader = document.querySelector('.playerStats-header')
     const opponentScoreHeader = document.querySelector('.opponentStats-header');
     playerScoreHeader.innerHTML = 'Player 1';
@@ -253,8 +250,7 @@ const setObserver = () => {
 
 const setObserverLegend = () => {
     const youDesc = document.querySelector('.you').nextElementSibling;
-    youDesc.innerHTML = 'Player 1';
-    console.log(youDesc)
+    youDesc.innerHTML = 'Player 1';  
     const trailDesc = document.querySelector('.trail').nextElementSibling;
     trailDesc.innerHTML = 'Player 1 trail';
     const opponentDesc = document.querySelector('.opponent').nextElementSibling;
@@ -263,12 +259,14 @@ const setObserverLegend = () => {
     opponentTrailDesc.innerHTML = 'Player 2 trail';
     const overlayDesc = document.querySelector('.overlay').nextElementSibling;
     overlayDesc.innerHTML = 'Both players at the same position';
+    document.querySelector('.moving').remove();
 }
 
 
 // Listeners
 
-moveButtons.forEach(btn => btn.onclick = handleMove);
+moveButtons.forEach(btn => btn.onclick = handleMove)
+
 startButton.onclick = start;
 
 form.onsubmit = (e) => {
@@ -282,6 +280,10 @@ chatBtn.onclick = (e) => {
     chatContainer.classList.toggle('chat-active')
     handleChatNotifications(false);
 }
+
+window.onload = () => {
+    if (checkIsMobile()) setMobile();   
+};
 helpBtn.onclick = openLegend;
 exitBtn.onclick = () => window.location.href = MAIN_PAGE;
 window.onkeydown = (e) => handleKeyPress(e, [handleMove, openStats]);
