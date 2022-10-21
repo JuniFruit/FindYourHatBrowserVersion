@@ -8,7 +8,7 @@ To play the game, visit this [web-site](https://findyourhat2.herokuapp.com/);
 * Before you start, you have to enter your name and field size. The field is always a square;
 * Game features 2 levels of difficulty (Easy, Hard). It affects the percentage of holes on a field;
 * Game has random field generator, if game restarts it generates new field of the same size and difficulty automatically;
-* Field generator uses A* Pathfinder algorithm to make sure the field is actually beatable;
+* Field generator uses depth first search algorithm to make sure the field is actually beatable;
 
 
 
@@ -31,3 +31,11 @@ Multiplayer updates:
 
 Every pair of players can play in a separate room. If a room doesn't exist, you can't join it, instead new room will be created.
 Only two players can play, so it's the Duel type game. However, your game can be watched by the others in real time (Observer mode is still experimental. You may encounter some inconsistencies).
+
+## Upadate v1.3
+
+* Upgraded singleplayer mode
+* Added scoring system
+* Now you can play against AI on different difficulty levels
+* UI fixes
+* Different difficulty levels features different search algorithms for AI, including depth first search and A* star
