@@ -17,7 +17,8 @@ import {
     checkIsMobile,
     setMobile,
     disableBtns,
-    getCanvaseSize
+    getCanvaseSize,
+    preventDoubleTap
 } from '../utilities.js';
 
 import { receiveMessage, sendMessage } from './chat.js';
@@ -33,8 +34,9 @@ const spinner = document.querySelector('.spinner');
 const scoreBtn = document.getElementById('score');
 const utilMsg = document.querySelector('.util-msg')
 const moveButtons = document.querySelectorAll('#move-button')
+const mobileRestart = document.querySelector('.mobile-restart')
 
-
+if (checkIsMobile()) startButton.style.display = 'none';
 
 //Constants
 
@@ -58,7 +60,7 @@ const init = () => {
 
     ioClient.on('field-return', field => {
         clearMessage();
-        disableBtns([startButton])
+        disableBtns([startButton, mobileRestart])
         createField(field);
     })
 
@@ -75,7 +77,7 @@ const init = () => {
                 await showMessage(payload);
                 game = null;
                 startButton.innerHTML = 'Waiting for a player';
-                disableBtns([startButton])
+                disableBtns([startButton, mobileRestart])
                 spinner.style.display = 'block';
                 setQuery(room);
                 break;
@@ -84,7 +86,7 @@ const init = () => {
                 utilMsg.innerHTML = '';
                 setQuery('')
                 startButton.innerHTML = 'Restart'
-                disableBtns([startButton])
+                disableBtns([startButton, mobileRestart])
                 start()
                 break;
 
@@ -95,7 +97,7 @@ const init = () => {
                     msg: `You've Lost!`,
                     score: { playerScore: payload.score, enemyScore: payload.enemyScore },
                     notice: payload.notice + '. Waiting for opponent to restart',
-                    buttonsToDisable: [startButton],
+                    buttonsToDisable: [startButton, mobileRestart],
                     color: 'red'
                 })
 
@@ -109,7 +111,9 @@ const init = () => {
                     notice: payload.notice + '. Press Restart to continue',
                     color: 'blue'
                 })
-                await countDownForElement(startButton, 5);
+                if (checkIsMobile()) return countDownForElement(mobileRestart, 5);
+
+                countDownForElement(startButton, 5);
 
                 break;
             case SERVER.MESSAGE.OPPONENT_LEFT:
@@ -125,11 +129,11 @@ const init = () => {
                 break;
             case SERVER.MESSAGE.OBSERVER_NEW_CONNECTION:
                 setObserver()
-                start();               
+                start();
                 break;
             case SERVER.MESSAGE.OBSERVER_UPDATE_GAME:
                 clearCanvas();
-                await showMessage(payload.notice);                
+                await showMessage(payload.notice);
                 updateScoreboard(payload.score, payload.enemyScore);
                 break;
 
@@ -170,7 +174,7 @@ const init = () => {
     ioClient.on("connect_error", async () => {
         clearCanvas();
 
-        disableBtns([startButton]);
+        disableBtns([startButton, mobileRestart]);
         await showMessage('Lost connection to the server. Trying to establish a new connection')
         setTimeout(() => {
             socket.connect();
@@ -202,7 +206,7 @@ const createField = (serverField) => {
 }
 
 const start = () => {
-   
+
     ioClient.emit('generate');
 }
 
@@ -238,7 +242,7 @@ const receiveObserverMoves = (pos1, pos2) => {
 
 const setObserver = () => {
     startButton.innerHTML = 'Watching ongoing game'
-    disableBtns([startButton]);
+    disableBtns([startButton, mobileRestart]);
     chatBtn.style.display = 'none';
     document.querySelector('.mobile-buttons').style.display = 'none';
     const playerScoreHeader = document.querySelector('.playerStats-header')
@@ -250,7 +254,7 @@ const setObserver = () => {
 
 const setObserverLegend = () => {
     const youDesc = document.querySelector('.you').nextElementSibling;
-    youDesc.innerHTML = 'Player 1';  
+    youDesc.innerHTML = 'Player 1';
     const trailDesc = document.querySelector('.trail').nextElementSibling;
     trailDesc.innerHTML = 'Player 1 trail';
     const opponentDesc = document.querySelector('.opponent').nextElementSibling;
@@ -268,6 +272,7 @@ const setObserverLegend = () => {
 moveButtons.forEach(btn => btn.onclick = handleMove)
 
 startButton.onclick = start;
+mobileRestart.onclick = start;
 
 form.onsubmit = (e) => {
     e.preventDefault();
@@ -282,7 +287,7 @@ chatBtn.onclick = (e) => {
 }
 
 window.onload = () => {
-    if (checkIsMobile()) setMobile();   
+    if (checkIsMobile()) setMobile();
     preventDoubleTap(document.querySelector('.mobile-buttons'));
 };
 helpBtn.onclick = openLegend;

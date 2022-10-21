@@ -11,11 +11,11 @@ export const checkIsMobile = () => {
         /BlackBerry/i,
         /Windows Phone/i
     ];
-    
+
     const isMobBrowser = toMatch.some((toMatchItem) => {
         return navigator.userAgent.match(toMatchItem);
     });
-    return (window.innerWidth <= 768 && window.innerHeight <= 700) || isMobBrowser
+    return (window.innerWidth <= 768) || isMobBrowser
 }
 
 export const getCanvaseSize = () => {
@@ -51,7 +51,7 @@ export const setMobile = () => {
     document.querySelector('.mobile-buttons').style.display = 'flex';
     document.querySelector('.moving').style.display = 'none';
     const canvasBox = document.querySelector('#canvasBox')
-    const {w, h} = getCanvaseSize();
+    const { w, h } = getCanvaseSize();
     document.documentElement.style.setProperty('--canvasHeight', `${h}px`);
     document.documentElement.style.setProperty('--canvasWidth', '100%');
     // canvasBox.style.width = w;
@@ -120,11 +120,17 @@ export const clearMessage = () => {
 }
 
 export const disableBtns = (btns) => {
-    btns.forEach(btn => btn.disabled = true);
+    btns.forEach(btn => {
+        if (!btn) return;
+        btn.disabled = true
+    });
 }
 
 export const enableBtns = (btns) => {
-    btns.forEach(btn => btn.disabled = false);
+    btns.forEach(btn => {
+        if (!btn) return;
+        btn.disabled = false
+    });
 
 }
 

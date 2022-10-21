@@ -24,7 +24,7 @@ const helpBtn = document.getElementById('help');
 const multiplayerBtn = document.getElementById('multiplayer-button');
 const scoreBtn = document.getElementById('score');
 const moveButtons = document.querySelectorAll('#move-button');
-
+const mobileRestart = document.querySelector('.mobile-restart')
 
 
 let game;
@@ -39,7 +39,8 @@ const initGame = () => {
     setSize(getCanvaseSize())
     game = new Field({ size: Number(SIZE), difficulty: Number(DIFFICULTY) });
     settingsContainer.style.display = 'none';
-    restartButton.style.display = 'block';
+    if (!checkIsMobile()) restartButton.style.display = 'block';
+    console.log(mobileRestart)
     enterButton.innerHTML = 'Exit';
     multiplayerBtn.style.display = 'none';
     scoreBtn.style.display = 'block'
@@ -68,6 +69,7 @@ const handleMove = (e) => {
             score: { playerScore: game.playerScore, enemyScore: game.AIscore },
             notice: message + ' Press Restart to continue'
         })
+        if (checkIsMobile()) return countDownForElement(mobileRestart, 3);
         countDownForElement(restartButton, 3)
     }
 
@@ -84,7 +86,7 @@ const exitGame = () => {
 }
 
 const startGame = () => {
-    disableBtns([restartButton])
+    disableBtns([restartButton, mobileRestart])
     game.isOver = false;
     game.gameInit();
 
@@ -115,6 +117,7 @@ const handleGame = (e) => {
 
 
 const animate = () => {
+    if (!game) return;
     if ((game.opponentPosVert === game.endPosVert) && (game.opponentPosHor === game.endPosHor)) {
         clearCanvas();
         game.AIscore++;
@@ -125,6 +128,7 @@ const animate = () => {
             notice: 'Press Restart to continue',
             color: 'red'
         })
+        if (checkIsMobile()) return countDownForElement(mobileRestart, 3);
         countDownForElement(restartButton, 3);
         return;
     }

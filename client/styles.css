@@ -26,6 +26,12 @@ html {
 
 }
 
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+  }
+
 body {   
     width: 100%;
     background-color: var(--bgColor);
@@ -158,10 +164,11 @@ input::placeholder {
 
 
 .secondary-buttons {
-    display: flex;
+    /* display: flex;
     gap: .5rem;
     align-items: center;
-    
+    justify-content: center;
+     */
 }
 
 /* Move Buttons */
@@ -181,10 +188,11 @@ input::placeholder {
     opacity: .4;
     width: 3rem;
     height: 3rem;
+    margin: 0;
 }
 
 #move-button:hover {
-    margin: 0;
+
     opacity: .6;
 }
 
@@ -194,6 +202,14 @@ input::placeholder {
     align-items: center;
     gap: 1rem;
     margin-left: 3rem;
+}
+.middle-buttons {
+    display: flex;
+    align-items: center;   
+    margin-left: 1rem; 
+}
+.middle-buttons > button {
+    width: fit-content !important;
 }
 
 .right-buttons {
