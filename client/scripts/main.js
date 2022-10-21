@@ -149,7 +149,7 @@ scoreBtn.onclick = openStats;
 window.onload = () => {
     if (checkIsMobile()) {
         setMobile();
-        moveButtons.forEach(btn => preventDoubleTap(btn))
+        // moveButtons.forEach(btn => preventDoubleTap(btn))
         
     };
     showMessage('Hello, visitor! To start a game, enter the size of the field.')
