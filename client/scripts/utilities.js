@@ -32,7 +32,7 @@ export const preventDoubleTap = (element) => {
     let doubleTouchStartTimestamp = 0;
     element.addEventListener("touchstart", function (event) {
         let now = +(new Date());
-        if (doubleTouchStartTimestamp + 100 > now) {
+        if (doubleTouchStartTimestamp + 50 > now) {
             event.preventDefault();
         };
         doubleTouchStartTimestamp = now;
