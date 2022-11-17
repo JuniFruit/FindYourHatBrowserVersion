@@ -26,6 +26,7 @@ export const sendMessage = (socket) => {
         type: CLIENT.MESSAGE.NEW_MESSAGE,
         payload: msgBody.value
     }))
+    
     showChatMessage(msgBody.value, '', 'You');
     msgBody.value = '';
 }
